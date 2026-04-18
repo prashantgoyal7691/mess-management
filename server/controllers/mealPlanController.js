@@ -4,7 +4,6 @@ import User from "../models/User.js";
 const isLocked = (date) => {
   const today = new Date();
   const mealDate = new Date(date);
-  today.setDate(today.getDate() + 1);
 
   today.setHours(0, 0, 0, 0);
   mealDate.setHours(0, 0, 0, 0);
