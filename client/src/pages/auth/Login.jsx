@@ -36,7 +36,7 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-xl shadow-xl w-96 text-center">
         <h2 className="text-2xl font-bold mb-2">Login</h2>
-        <p className="text-gray-500 mb-4">Welcome back 👋</p>
+        <p className="text-gray-500 mb-4">Welcome back</p>
 
         <input
           type="email"

@@ -3,8 +3,10 @@ import User from "../models/User.js";
 
 // ✅ Correct lock logic (same as frontend)
 const isLocked = (date) => {
-  const today = new Date();
-  const mealDate = new Date(date);
+  const today = new Date(
+  new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+);
+  const mealDate = new Date(date + "T00:00:00");
 
   today.setHours(0, 0, 0, 0);
   mealDate.setHours(0, 0, 0, 0);

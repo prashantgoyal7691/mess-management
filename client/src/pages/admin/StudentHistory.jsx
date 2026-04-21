@@ -7,7 +7,7 @@ export default function StudentHistory() {
   const [meals, setMeals] = useState([]);
   const [student, setStudent] = useState(null);
   const [month, setMonth] = useState(() => {
-    return new Date().toLocaleDateString("en-CA").slice(0, 7);
+    return getISTDate().slice(0, 7);
   });
 
   useEffect(() => {

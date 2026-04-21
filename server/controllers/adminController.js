@@ -194,13 +194,18 @@ export const getMealCount = async (req, res) => {
     const students = await User.find({ messId });
     const studentIds = students.map((s) => s._id);
 
-    const todayObj = new Date();
-    const today = todayObj.toLocaleDateString("en-CA");
+    const today = new Date(
+      new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }),
+    ).toLocaleDateString("en-CA");
 
-    const tomorrowObj = new Date();
+    const tomorrowObj = new Date(
+      new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }),
+    );
     tomorrowObj.setDate(tomorrowObj.getDate() + 1);
 
-    const tomorrow = tomorrowObj.toLocaleDateString("en-CA");
+    const tomorrow = new Date(
+  tomorrowObj.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+).toLocaleDateString("en-CA");
 
     const todayMeals = await MealPlan.find({
       userId: { $in: studentIds },
@@ -371,8 +376,9 @@ export const getTodayReport = async (req, res) => {
   try {
     const adminId = req.user.id;
 
-    const todayObj = new Date();
-    const today = todayObj.toLocaleDateString("en-CA");
+    const today = new Date(
+  new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+).toLocaleDateString("en-CA");
 
     const expense = await DailyExpense.findOne({
       date: today,
@@ -461,7 +467,9 @@ export const getStudentHistory = async (req, res) => {
     const { studentId } = req.params;
     const { month } = req.query;
 
-    const today = new Date().toLocaleDateString("en-CA");
+    const today = new Date(
+  new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+).toLocaleDateString("en-CA");
 
     let filter = { userId: studentId };
 
@@ -576,9 +584,11 @@ export const downloadStudentHistoryPDF = async (req, res) => {
     }
 
     const meals = await MealPlan.find(filter);
-    const todayObj = new Date();
-    const today = todayObj.toLocaleDateString("en-CA");
-    const lockedMeals = meals.filter((m) => m.date < today + 1);
+    const today = new Date(
+  new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+).toLocaleDateString("en-CA");
+
+    const lockedMeals = meals.filter((m) => m.date <= today);
 
     const student = await User.findById(studentId).select(
       "fullName enrolmentNumber",
@@ -775,7 +785,6 @@ export const adminForgotPassword = async (req, res) => {
     await admin.save();
 
     await sendOTPEmail(email, otp);
-
 
     const check = await Admin.findOne({ email });
 

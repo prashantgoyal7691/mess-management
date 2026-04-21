@@ -14,7 +14,7 @@ export default function MealPlans() {
       d.setDate(d.getDate() + i);
 
       arr.push({
-        date: d.toLocaleDateString("en-CA"),
+        date: getISTDate(d),
         day: d.toLocaleDateString("en-US", { weekday: "long" }),
         display: d.toLocaleDateString("en-IN", {
           day: "2-digit",
@@ -62,14 +62,14 @@ export default function MealPlans() {
   }, [dates]);
 
   const isEditable = (date) => {
-    const today = new Date();
-    const d = new Date(date);
+    const today = new Date(getISTDate());
+    const d = new Date(date + "T00:00:00");
 
     today.setHours(0, 0, 0, 0);
     d.setHours(0, 0, 0, 0);
 
-    const tomorrow = new Date(today);
-    tomorrow.setDate(today.getDate() + 1);
+    const tomorrow = new Date(getISTDate());
+    tomorrow.setDate(tomorrow.getDate() + 1);
 
     return d > tomorrow; // ✅ only after tomorrow editable
   };

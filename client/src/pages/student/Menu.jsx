@@ -20,7 +20,7 @@ export default function Menu() {
 
       arr.push({
         day: d.toLocaleDateString("en-US", { weekday: "long" }),
-        date: d.toLocaleDateString("en-CA"), // ✅ FIXED
+        date: getISTDate(d), // ✅ FIXED
         displayDate: d.toLocaleDateString("en-IN", {
           day: "2-digit",
           month: "short",
@@ -99,8 +99,8 @@ export default function Menu() {
 
   // 🔒 lock logic
   const isLocked = (date) => {
-    const today = new Date();
-    const mealDate = new Date(date);
+    const today = new Date(getISTDate());
+    const mealDate = new Date(date + "T00:00:00");
 
     today.setHours(0, 0, 0, 0);
     mealDate.setHours(0, 0, 0, 0);

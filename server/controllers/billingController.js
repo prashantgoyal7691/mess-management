@@ -10,10 +10,14 @@ export const setDailyExpense = async (req, res) => {
 
     const { breakfastCost, lunchCost, dinnerCost } = req.body;
 
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowObj = new Date(
+      new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }),
+    );
+    tomorrowObj.setDate(tomorrowObj.getDate() + 1);
 
-    const date = tomorrow.toLocaleDateString("en-CA");
+    const date = new Date(
+      tomorrowObj.toLocaleString("en-US", { timeZone: "Asia/Kolkata" }),
+    ).toLocaleDateString("en-CA");
 
     const expense = await DailyExpense.findOneAndUpdate(
       { messId: adminId, date },

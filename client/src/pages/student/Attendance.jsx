@@ -69,7 +69,9 @@ export default function Attendance() {
         });
 
         const fullMonth = [];
-        const today = new Date();
+        const today = new Date(
+          new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }),
+        );
         // today.setDate(today.getDate() + 1);
 
         const isCurrentMonth =
@@ -111,7 +113,9 @@ export default function Attendance() {
 
         const monthKey = `${selectedYear}-${String(selectedMonth + 1).padStart(2, "0")}`;
 
-        const today = new Date();
+        const today = new Date(
+          new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }),
+        );
         today.setHours(0, 0, 0, 0);
 
         const filtered = data.filter((b) => {

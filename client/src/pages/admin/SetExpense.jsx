@@ -8,7 +8,7 @@ export default function SetExpense() {
 
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
-  const date = tomorrow.toLocaleDateString("en-CA");
+  const date = getISTDate(tomorrow);
 
   const handleSubmit = async () => {
     try {

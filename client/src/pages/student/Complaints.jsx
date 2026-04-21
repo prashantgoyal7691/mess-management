@@ -6,7 +6,7 @@ export default function Complaints() {
   const [title, setTitle] = useState("");
   const [type, setType] = useState("Food Quality");
   const [description, setDescription] = useState("");
-  const [date, setDate] = useState(new Date().toLocaleDateString("en-CA"));
+  const [date, setDate] = useState(getISTDate());
   const navigate = useNavigate();
 
   const handleSubmit = async () => {
@@ -45,7 +45,7 @@ export default function Complaints() {
       setType("Food Quality");
       setTitle("");
       setDescription("");
-      setDate(new Date().toLocaleDateString("en-CA"));
+      setDate(getISTDate());
     } catch (err) {
       console.log(err);
       alert("Error submitting complaint");
