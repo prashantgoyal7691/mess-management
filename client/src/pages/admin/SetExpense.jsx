@@ -1,6 +1,12 @@
 import { useState } from "react";
 import AdminLayout from "../../layouts/AdminLayout";
 
+const getISTDate = (date = new Date()) => {
+  return new Date(
+    date.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+  ).toLocaleDateString("en-CA");
+};
+
 export default function SetExpense() {
   const [breakfastCost, setBreakfastCost] = useState("");
   const [lunchCost, setLunchCost] = useState("");

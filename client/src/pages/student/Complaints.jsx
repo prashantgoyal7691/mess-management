@@ -2,6 +2,12 @@ import { useState } from "react";
 import StudentLayout from "../../layouts/StudentLayout";
 import { useNavigate } from "react-router-dom";
 
+const getISTDate = (date = new Date()) => {
+  return new Date(
+    date.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+  ).toLocaleDateString("en-CA");
+};
+
 export default function Complaints() {
   const [title, setTitle] = useState("");
   const [type, setType] = useState("Food Quality");

@@ -2,6 +2,12 @@ import { useEffect, useState } from "react";
 import AdminLayout from "../../layouts/AdminLayout";
 import axios from "axios";
 
+const getISTDate = (date = new Date()) => {
+  return new Date(
+    date.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+  ).toLocaleDateString("en-CA");
+};
+
 export default function MealPlans() {
   const [menu, setMenu] = useState({});
 

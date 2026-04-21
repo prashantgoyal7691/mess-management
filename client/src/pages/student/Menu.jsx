@@ -1,6 +1,12 @@
 import StudentLayout from "../../layouts/StudentLayout";
 import { useState, useEffect } from "react";
 
+const getISTDate = (date = new Date()) => {
+  return new Date(
+    date.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+  ).toLocaleDateString("en-CA");
+};
+
 export default function Menu() {
   const [menus, setMenus] = useState({});
   const [plans, setPlans] = useState({});

@@ -2,6 +2,12 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import AdminLayout from "../../layouts/AdminLayout";
 
+const getISTDate = (date = new Date()) => {
+  return new Date(
+    date.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+  ).toLocaleDateString("en-CA");
+};
+
 export default function StudentHistory() {
   const { id } = useParams();
   const [meals, setMeals] = useState([]);
