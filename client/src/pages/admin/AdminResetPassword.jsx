@@ -43,34 +43,34 @@ export default function AdminResetPassword() {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100">
-      <div className="bg-white p-6 rounded shadow w-80 text-center">
-        <h2 className="text-xl font-bold mb-4">Reset Password</h2>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 px-4">
+      <div className="bg-white/5 backdrop-blur-lg border border-white/10 p-8 rounded-2xl shadow-2xl w-full max-w-sm text-center">
+        <h2 className="text-xl font-bold mb-4 text-white">Reset Password</h2>
 
         <input
           type="email"
           value={email}
           disabled
-          className="w-full p-2 border mb-3 rounded bg-gray-100"
+          className="w-full bg-white/10 border border-white/20 p-2 mb-3 rounded text-gray-400"
         />
 
         <input
           type="text"
           placeholder="Enter OTP"
-          className="w-full p-2 border mb-3 rounded"
+          className="w-full bg-white/10 border border-white/20 focus:ring-2 focus:ring-green-400 outline-none p-2 mb-3 rounded text-white placeholder-gray-400 text-center tracking-widest"
           onChange={(e) => setOtp(e.target.value)}
         />
 
         <input
           type="password"
           placeholder="New Password"
-          className="w-full p-2 border mb-3 rounded"
+          className="w-full bg-white/10 border border-white/20 focus:ring-2 focus:ring-green-400 outline-none p-2 mb-3 rounded text-white placeholder-gray-400"
           onChange={(e) => setNewPassword(e.target.value)}
         />
 
         <button
           onClick={handleReset}
-          className="w-full bg-green-500 text-white p-2 rounded"
+          className="w-full bg-green-400 hover:bg-green-500 text-black font-semibold p-2 rounded"
         >
           Reset Password
         </button>

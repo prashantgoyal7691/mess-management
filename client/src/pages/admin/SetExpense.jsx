@@ -47,18 +47,18 @@ export default function SetExpense() {
 
   return (
     <AdminLayout>
-      <div className="max-w-xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6">
+      <div className="max-w-xl mx-auto p-4 md:p-6">
+        <h1 className="text-xl md:text-3xl font-bold mb-6">
           💰 Set Expense for {date}
         </h1>
 
-        <div className="bg-white p-6 rounded-xl shadow space-y-4">
+        <div className="bg-white p-4 md:p-6 rounded-xl shadow space-y-4">
           <input
             type="number"
             placeholder="Breakfast Cost"
             value={breakfastCost}
             onChange={(e) => setBreakfastCost(e.target.value)}
-            className="w-full border p-3 rounded"
+            className="w-full border p-2 md:p-3 rounded text-sm md:text-base"
           />
 
           <input
@@ -66,7 +66,7 @@ export default function SetExpense() {
             placeholder="Lunch Cost"
             value={lunchCost}
             onChange={(e) => setLunchCost(e.target.value)}
-            className="w-full border p-3 rounded"
+            className="w-full border p-2 md:p-3 rounded text-sm md:text-base"
           />
 
           <input
@@ -74,7 +74,7 @@ export default function SetExpense() {
             placeholder="Dinner Cost"
             value={dinnerCost}
             onChange={(e) => setDinnerCost(e.target.value)}
-            className="w-full border p-3 rounded"
+            className="w-full border p-2 md:p-3 rounded text-sm md:text-base"
           />
 
           <button

@@ -59,16 +59,28 @@ export const getAllComplaints = async (req, res) => {
 export const updateComplaint = async (req, res) => {
   try {
     const { id } = req.params;
-    const { status, reply } = req.body;
+    const { status, reply } = req.body || {};
 
-    const updated = await Complaint.findByIdAndUpdate(
-      id,
-      { status, reply },
-      { new: true }
-    );
+    const complaint = await Complaint.findById(id);
 
-    res.json(updated);
+    if (!complaint) {
+      return res.status(404).json({ message: "Complaint not found" });
+    }
+
+    // update only if provided
+    if (status !== undefined) {
+      complaint.status = status;
+    }
+
+    if (reply !== undefined) {
+      complaint.reply = reply;
+    }
+
+    await complaint.save();
+
+    res.json({ message: "Complaint updated", complaint });
   } catch (err) {
+    console.log("UPDATE COMPLAINT ERROR:", err);
     res.status(500).json({ message: "Error updating complaint" });
   }
 };

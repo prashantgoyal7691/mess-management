@@ -33,15 +33,15 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-xl shadow-xl w-96 text-center">
-        <h2 className="text-2xl font-bold mb-2">Login</h2>
-        <p className="text-gray-500 mb-4">Welcome back</p>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+      <div className="bg-white/5 backdrop-blur-lg p-8 rounded-2xl border border-white/10 shadow-2xl w-full max-w-md text-center">
+        <h2 className="text-2xl font-bold mb-2 text-white">Login</h2>
+        <p className="text-gray-400 mb-4">Welcome back</p>
 
         <input
           type="email"
           placeholder="Enter Email"
-          className="border border-gray-300 focus:ring-2 focus:ring-blue-400 outline-none p-2 w-full mb-3 rounded"
+          className="bg-white/10 border border-white/20 focus:ring-2 focus:ring-green-400 outline-none p-2 w-full mb-3 rounded text-white placeholder-gray-400"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
@@ -49,14 +49,14 @@ export default function Login() {
         <input
           type="password"
           placeholder="Enter Password"
-          className="border border-gray-300 focus:ring-2 focus:ring-blue-400 outline-none p-2 w-full mb-3 rounded"
+          className="bg-white/10 border border-white/20 focus:ring-2 focus:ring-green-400 outline-none p-2 w-full mb-3 rounded text-white placeholder-gray-400"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
 
         <button
           onClick={handleEmailLogin}
-          className="bg-green-600 hover:bg-green-700 transition text-white px-6 py-2 rounded-lg w-full mb-3"
+          className="bg-green-400 hover:bg-green-500 text-black font-semibold transition px-6 py-2 rounded-lg w-full mb-3"
         >
           Login
         </button>

@@ -25,15 +25,17 @@ export default function StudentDetailsAdmin() {
 
   return (
     <AdminLayout>
-      <h1 className="text-2xl font-bold mb-6">👤 Student Profile</h1>
+      <div className="p-4 md:p-6">
+        <h1 className="text-xl md:text-2xl font-bold mb-6">👤 Student Profile</h1>
 
-      <div className="bg-white p-6 rounded-xl shadow grid grid-cols-2 gap-6">
-        <div><b>Name:</b> {student.fullName}</div>
-        <div><b>Email:</b> {student.email}</div>
-        <div><b>Hostel:</b> {student.hostelName}</div>
-        <div><b>Room:</b> {student.roomNumber}</div>
-        <div><b>Enrollment:</b> {student.enrolmentNumber}</div>
-        <div><b>Phone:</b> {student.phone}</div>
+        <div className="bg-white p-4 md:p-6 rounded-xl shadow grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+          <div className="flex flex-col text-sm md:text-base"><span className="font-semibold">Name:</span> {student.fullName}</div>
+          <div className="flex flex-col text-sm md:text-base"><span className="font-semibold">Email:</span> {student.email}</div>
+          <div className="flex flex-col text-sm md:text-base"><span className="font-semibold">Hostel:</span> {student.hostelName}</div>
+          <div className="flex flex-col text-sm md:text-base"><span className="font-semibold">Room:</span> {student.roomNumber}</div>
+          <div className="flex flex-col text-sm md:text-base"><span className="font-semibold">Enrollment:</span> {student.enrolmentNumber}</div>
+          <div className="flex flex-col text-sm md:text-base"><span className="font-semibold">Phone:</span> {student.phone}</div>
+        </div>
       </div>
     </AdminLayout>
   );

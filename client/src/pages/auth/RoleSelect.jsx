@@ -39,12 +39,12 @@ export default function RoleSelect() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
       {/* 🔝 Navbar */}
-      <div className="sticky top-0 z-50 w-full flex justify-between items-center px-10 py-4 bg-[#0f172a]/80 backdrop-blur-sm border-b border-white/5">
+      <div className="sticky top-0 z-50 w-full flex justify-between items-center px-4 md:px-10 py-4 bg-[#0f172a]/80 backdrop-blur-sm border-b border-white/5">
         <h1 className="text-2xl font-bold text-green-400">
           🍽️ NIT Srinagar Mess
         </h1>
 
-        <div className="flex gap-6 items-center">
+        <div className="hidden md:flex gap-6 items-center">
           <button
             onClick={() =>
               document
@@ -91,12 +91,16 @@ export default function RoleSelect() {
             Sign Up Free
           </button>
         </div>
+        <div className="md:hidden flex gap-3">
+          <button onClick={() => navigate("/login")} className="text-gray-300">Login</button>
+          <button onClick={() => navigate("/signup")} className="bg-green-500 text-white px-3 py-1 rounded">Sign Up</button>
+        </div>
       </div>
 
       {/* 🎯 Hero Section */}
-      <div className="mt-16 px-10 grid md:grid-cols-2 gap-10 items-center">
+      <div className="mt-16 px-4 md:px-10 grid md:grid-cols-2 gap-10 items-center">
         <div>
-          <h1 className="text-5xl md:text-6xl font-extrabold leading-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold leading-tight">
             Smart Mess <br />
             <span className="text-green-400">Management System</span>
           </h1>
@@ -118,14 +122,14 @@ export default function RoleSelect() {
           <div className="flex gap-4 mt-8">
             <button
               onClick={() => navigate("/signup")}
-              className="bg-green-400 hover:bg-green-500 text-black px-6 py-3 rounded-xl font-semibold shadow-xl hover:scale-105 transition"
+              className="bg-green-400 hover:bg-green-500 text-black px-6 py-3 rounded-xl font-semibold shadow-xl hover:scale-105 transition-all duration-300"
             >
               Get Started
             </button>
 
             <button
               onClick={() => navigate("/login")}
-              className="border border-white/20 px-6 py-3 rounded-xl hover:bg-white/10 transition"
+              className="border border-white/20 px-6 py-3 rounded-xl hover:bg-white/10 transition-all duration-300"
             >
               Login
             </button>
@@ -139,14 +143,14 @@ export default function RoleSelect() {
       </div>
 
       {/* 🏠 Select Your Mess */}
-      <div id="messes" className="mt-20 px-10 text-center">
+      <div id="messes" className="mt-20 px-4 md:px-10 text-center">
         <h2 className="text-3xl font-bold mb-6 text-white">Select Your Mess</h2>
 
-        <p className="text-gray-500 mb-10">
+        <p className="text-gray-400 mb-10">
           Choose your hostel mess to continue
         </p>
 
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
           {mergedMesses.map((mess) => (
             <div
               key={mess.messName}
@@ -199,15 +203,15 @@ export default function RoleSelect() {
       </div>
 
       {/* 🚀 Features Section */}
-      <div className="mt-24 px-10 border-t border-white/10 pt-16"></div>
-      <div id="features" className="mt-24 px-10">
+      <div className="mt-24 px-4 md:px-10 border-t border-white/10 pt-16"></div>
+      <div id="features" className="mt-24 px-4 md:px-10">
         <h2 className="text-3xl font-bold text-center mb-12">
           Features of SmartMess
         </h2>
 
         <div className="grid md:grid-cols-3 gap-8">
           {/* Feature 1 */}
-          <div className="bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-lg p-6 rounded-2xl border border-white/10 hover:shadow-xl hover:scale-105 transition">
+          <div className="bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-lg p-6 rounded-2xl border border-white/10 hover:shadow-xl hover:scale-105 transition-all duration-300">
             <h3 className="font-semibold text-lg mb-2">
               📅 Meal Attendance Tracking
             </h3>
@@ -218,7 +222,7 @@ export default function RoleSelect() {
           </div>
 
           {/* Feature 2 */}
-          <div className="bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-lg p-6 rounded-2xl border border-white/10 hover:shadow-xl hover:scale-105 transition">
+          <div className="bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-lg p-6 rounded-2xl border border-white/10 hover:shadow-xl hover:scale-105 transition-all duration-300">
             <h3 className="font-semibold text-lg mb-2">
               🍽 Dynamic Menu Management
             </h3>
@@ -229,7 +233,7 @@ export default function RoleSelect() {
           </div>
 
           {/* Feature 3 */}
-          <div className="bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-lg p-6 rounded-2xl border border-white/10 hover:shadow-xl hover:scale-105 transition">
+          <div className="bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-lg p-6 rounded-2xl border border-white/10 hover:shadow-xl hover:scale-105 transition-all duration-300">
             <h3 className="font-semibold text-lg mb-2">💸 Automated Billing</h3>
             <p className="text-gray-300">
               Bills are generated automatically based on meal consumption.
@@ -237,7 +241,7 @@ export default function RoleSelect() {
           </div>
 
           {/* Feature 4 */}
-          <div className="bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-lg p-6 rounded-2xl border border-white/10 hover:shadow-xl hover:scale-105 transition">
+          <div className="bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-lg p-6 rounded-2xl border border-white/10 hover:shadow-xl hover:scale-105 transition-all duration-300">
             <h3 className="font-semibold text-lg mb-2">
               🛠 Admin Approval System
             </h3>
@@ -247,7 +251,7 @@ export default function RoleSelect() {
           </div>
 
           {/* Feature 5 */}
-          <div className="bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-lg p-6 rounded-2xl border border-white/10 hover:shadow-xl hover:scale-105 transition">
+          <div className="bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-lg p-6 rounded-2xl border border-white/10 hover:shadow-xl hover:scale-105 transition-all duration-300">
             <h3 className="font-semibold text-lg mb-2">
               📊 Reports & Analytics
             </h3>
@@ -257,7 +261,7 @@ export default function RoleSelect() {
           </div>
 
           {/* Feature 6 */}
-          <div className="bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-lg p-6 rounded-2xl border border-white/10 hover:shadow-xl hover:scale-105 transition">
+          <div className="bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-lg p-6 rounded-2xl border border-white/10 hover:shadow-xl hover:scale-105 transition-all duration-300">
             <h3 className="font-semibold text-lg mb-2">
               📢 Feedback & Complaints
             </h3>
@@ -269,16 +273,16 @@ export default function RoleSelect() {
         </div>
       </div>
 
-      <div className="mt-28 px-10 text-center border-t border-white/10 pt-16"></div>
+      <div className="mt-28 px-4 md:px-10 text-center border-t border-white/10 pt-16"></div>
 
       {/* 🔄 How It Works */}
-      <div id="how-it-works" className="mt-28 px-10 text-center">
-        <p className="text-green-600 bg-green-100 inline-block px-4 py-1 rounded-full text-sm mb-4">
+      <div id="how-it-works" className="mt-28 px-4 md:px-10 text-center">
+        <p className="text-green-300 bg-green-500/10 inline-block px-4 py-1 rounded-full text-sm mb-4">
           Simple Process
         </p>
 
         <h2 className="text-4xl font-bold mb-4">How It Works</h2>
-        <p className="text-gray-500 mb-12">Get started in under a minute</p>
+        <p className="text-gray-400 mb-12">Get started in under a minute</p>
 
         <div className="grid md:grid-cols-5 gap-8 items-start">
           {/* Step 1 */}
@@ -288,7 +292,7 @@ export default function RoleSelect() {
               👤
             </div>
             <h3 className="font-semibold">Create Account</h3>
-            <p className="text-gray-500 text-sm mt-2">
+            <p className="text-gray-400 text-sm mt-2">
               Sign up using your college email and basic details.
             </p>
           </div>
@@ -300,7 +304,7 @@ export default function RoleSelect() {
               🛡
             </div>
             <h3 className="font-semibold">Admin Approval</h3>
-            <p className="text-gray-500 text-sm mt-2">
+            <p className="text-gray-400 text-sm mt-2">
               Wait for admin verification before accessing the system.
             </p>
           </div>
@@ -312,7 +316,7 @@ export default function RoleSelect() {
               📅
             </div>
             <h3 className="font-semibold">Access Dashboard</h3>
-            <p className="text-gray-500 text-sm mt-2">
+            <p className="text-gray-400 text-sm mt-2">
               View menu, mark attendance, and manage your meals.
             </p>
           </div>
@@ -324,7 +328,7 @@ export default function RoleSelect() {
               ⭐
             </div>
             <h3 className="font-semibold">Give Feedback</h3>
-            <p className="text-gray-500 text-sm mt-2">
+            <p className="text-gray-400 text-sm mt-2">
               Rate meals and submit complaints to improve quality.
             </p>
           </div>
@@ -336,7 +340,7 @@ export default function RoleSelect() {
               📈
             </div>
             <h3 className="font-semibold">Track History</h3>
-            <p className="text-gray-500 text-sm mt-2">
+            <p className="text-gray-400 text-sm mt-2">
               View attendance, billing, and meal history anytime.
             </p>
           </div>
@@ -344,8 +348,8 @@ export default function RoleSelect() {
       </div>
 
       {/* 🔻 Footer */}
-      <div className="mt-24 px-10 border-t border-white/10 pt-10 pb-6">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-6 text-gray-400">
+      <div className="mt-24 px-4 md:px-10 border-t border-white/10 pt-10 pb-6">
+        <div className="flex flex-col md:flex-row justify-between items-center text-center md:text-left gap-6 text-gray-400">
           {/* Left */}
           <div className="text-center md:text-left">
             <h2 className="text-xl font-bold text-green-400">🍽️ SmartMess</h2>
@@ -356,7 +360,7 @@ export default function RoleSelect() {
           </div>
 
           {/* Middle Links */}
-          <div className="flex gap-6 text-sm">
+          <div className="flex flex-wrap gap-4 justify-center md:justify-start text-sm">
             <button
               onClick={() =>
                 document

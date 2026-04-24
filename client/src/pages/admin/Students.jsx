@@ -126,18 +126,20 @@ export default function Students() {
 
   return (
     <AdminLayout>
-      <h1 className="text-2xl font-bold mb-6">👨‍🎓 Students</h1>
+      <div className="p-4 md:p-6">
+        <h1 className="text-xl md:text-2xl font-bold mb-6">👨‍🎓 Students</h1>
+      </div>
 
       <div className="bg-white rounded-xl shadow overflow-hidden">
         {loading && <p className="text-center p-4 text-gray-500">Loading...</p>}
 
-        <div className="flex gap-4 mb-4">
+        <div className="flex flex-col md:flex-row gap-3 md:gap-4 mb-4">
           <input
             type="text"
             placeholder="Search by Enrollment"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="border p-2 rounded w-1/3"
+            className="border p-2 rounded w-full md:w-1/3"
           />
 
           <select
@@ -151,94 +153,96 @@ export default function Students() {
           </select>
         </div>
 
-        <table className="w-full">
-          <thead className="bg-gray-100 text-gray-600 text-sm">
-            <tr>
-              <th className="p-4 text-left">Name</th>
-              <th className="text-left">Email</th>
-              <th className="text-left">Hostel</th>
-              <th className="text-left">Room</th>
-              <th className="text-left">Enrollment</th>
-              <th className="text-left">Phone</th>
-              <th className="text-left">Actions</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {!loading && filteredStudents.length === 0 && (
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[800px]">
+            <thead className="bg-gray-100 text-gray-600 text-sm">
               <tr>
-                <td colSpan="7" className="text-center p-6 text-gray-500">
-                  No students found
-                </td>
+                <th className="p-4 text-left">Name</th>
+                <th className="text-left">Email</th>
+                <th className="text-left">Hostel</th>
+                <th className="text-left">Room</th>
+                <th className="text-left">Enrollment</th>
+                <th className="text-left">Phone</th>
+                <th className="text-left">Actions</th>
               </tr>
-            )}
-            {currentStudents.map((s) => (
-              <tr
-                key={s._id}
-                className={`border-t hover:bg-purple-50 cursor-pointer ${
-                  !s.isApproved ? "bg-yellow-50" : ""
-                }`}
-                onClick={() => navigate(`/admin/student/${s._id}`)}
-              >
-                <td className="p-4 font-semibold">{s.fullName}</td>
-                <td className="p-4">{s.email}</td>
-                <td className="p-4">{s.hostelName}</td>
-                <td className="p-4">{s.roomNumber}</td>
-                <td className="p-4">{s.enrolmentNumber}</td>
-                <td className="p-4">{s.phone}</td>
-                <td className="p-4">
-                  {s.isApproved ? (
-                    <div className="flex gap-2">
-                      <span className="text-green-600 font-semibold bg-green-100 px-2 py-1 rounded">
-                        Approved
-                      </span>
+            </thead>
 
-                      <button
-                        disabled={loading}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDelete(s._id);
-                        }}
-                        className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="flex gap-2 items-center">
-                      <span className="text-yellow-600 bg-yellow-100 px-2 py-1 rounded text-xs">
-                        Pending
-                      </span>
-                      <button
-                        disabled={loading}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleApprove(s._id);
-                        }}
-                        className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm"
-                      >
-                        Approve
-                      </button>
+            <tbody>
+              {!loading && filteredStudents.length === 0 && (
+                <tr>
+                  <td colSpan="7" className="text-center p-6 text-gray-500">
+                    No students found
+                  </td>
+                </tr>
+              )}
+              {currentStudents.map((s) => (
+                <tr
+                  key={s._id}
+                  className={`border-t hover:bg-purple-50 cursor-pointer ${
+                    !s.isApproved ? "bg-yellow-50" : ""
+                  }`}
+                  onClick={() => navigate(`/admin/student/${s._id}`)}
+                >
+                  <td className="p-4 font-semibold">{s.fullName}</td>
+                  <td className="p-4">{s.email}</td>
+                  <td className="p-4">{s.hostelName}</td>
+                  <td className="p-4">{s.roomNumber}</td>
+                  <td className="p-4">{s.enrolmentNumber}</td>
+                  <td className="p-4">{s.phone}</td>
+                  <td className="p-4">
+                    {s.isApproved ? (
+                      <div className="flex gap-2">
+                        <span className="text-green-600 font-semibold bg-green-100 px-2 py-1 rounded">
+                          Approved
+                        </span>
 
-                      <button
-                        disabled={loading}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleReject(s._id);
-                        }}
-                        className="bg-red-500 text-white px-3 py-1 rounded text-sm"
-                      >
-                        Reject
-                      </button>
-                    </div>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                        <button
+                          disabled={loading}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDelete(s._id);
+                          }}
+                          className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex gap-2 items-center">
+                        <span className="text-yellow-600 bg-yellow-100 px-2 py-1 rounded text-xs">
+                          Pending
+                        </span>
+                        <button
+                          disabled={loading}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleApprove(s._id);
+                          }}
+                          className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm"
+                        >
+                          Approve
+                        </button>
 
-        <div className="flex justify-center items-center gap-4 p-4">
+                        <button
+                          disabled={loading}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleReject(s._id);
+                          }}
+                          className="bg-red-500 text-white px-3 py-1 rounded text-sm"
+                        >
+                          Reject
+                        </button>
+                      </div>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 p-4">
           <button
             disabled={currentPage === 1}
             onClick={() => setCurrentPage((prev) => prev - 1)}

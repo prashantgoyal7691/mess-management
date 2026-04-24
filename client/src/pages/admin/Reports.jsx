@@ -44,55 +44,59 @@ export default function Reports() {
 
   return (
     <AdminLayout>
-      <h1 className="text-2xl font-bold mb-6">📅 Today's Report</h1>
+      <div className="p-4 md:p-6">
+        <h1 className="text-xl md:text-2xl font-bold mb-6">📅 Today's Report</h1>
+      </div>
 
-      <div className="bg-white rounded-xl shadow overflow-hidden">
+      <div className="bg-white rounded-xl shadow overflow-hidden p-4 md:p-6">
         <div className="mb-4">
           <input
             type="text"
             placeholder="Search by Enrollment"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="border p-2 rounded w-1/3"
+            className="border p-2 rounded w-full md:w-1/3"
           />
         </div>
-        <table className="w-full text-sm">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="p-4">Name</th>
-              <th>Enroll</th>
-              <th>Breakfast</th>
-              <th>Lunch</th>
-              <th>Dinner</th>
-              <th>Total</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {filteredReport.length === 0 && (
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm min-w-[600px]">
+            <thead className="bg-gray-100">
               <tr>
-                <td colSpan="6" className="text-center p-6 text-gray-500">
-                  No data found
-                </td>
+                <th className="p-4">Name</th>
+                <th>Enroll</th>
+                <th>Breakfast</th>
+                <th>Lunch</th>
+                <th>Dinner</th>
+                <th>Total</th>
               </tr>
-            )}
-            {currentReport.map((r, i) => (
-              <tr
-                key={i}
-                className="border-t hover:bg-purple-50 cursor-pointer"
-                onClick={() => navigate(`/admin/history/${r._id}`)}
-              >
-                <td className="p-4 font-semibold">{r.name}</td>
-                <td className="p-4">{r.enrolment}</td>
-                <td className="text-center p-4">₹{r.breakfast}</td>
-                <td className="text-center p-4">₹{r.lunch}</td>
-                <td className="text-center p-4">₹{r.dinner}</td>
-                <td className="text-center font-bold p-4">₹{r.total}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <div className="flex justify-center items-center gap-4 p-4">
+            </thead>
+
+            <tbody>
+              {filteredReport.length === 0 && (
+                <tr>
+                  <td colSpan="6" className="text-center p-6 text-gray-500">
+                    No data found
+                  </td>
+                </tr>
+              )}
+              {currentReport.map((r, i) => (
+                <tr
+                  key={i}
+                  className="border-t hover:bg-purple-50 cursor-pointer"
+                  onClick={() => navigate(`/admin/history/${r._id}`)}
+                >
+                  <td className="p-4 font-semibold">{r.name}</td>
+                  <td className="p-4">{r.enrolment}</td>
+                  <td className="text-center p-4">₹{r.breakfast}</td>
+                  <td className="text-center p-4">₹{r.lunch}</td>
+                  <td className="text-center p-4">₹{r.dinner}</td>
+                  <td className="text-center font-bold p-4">₹{r.total}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 p-4">
           <button
             disabled={currentPage === 1}
             onClick={() => setCurrentPage((prev) => prev - 1)}

@@ -88,10 +88,10 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white shadow-xl p-8 rounded-xl w-96">
-        <h2 className="text-2xl font-bold mb-2 text-center">Create Account</h2>
-        <p className="text-gray-500 text-center mb-4">Sign up to get started</p>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 px-4">
+      <div className="bg-white/5 backdrop-blur-lg border border-white/10 shadow-2xl p-8 rounded-2xl w-full max-w-md">
+        <h2 className="text-2xl font-bold mb-2 text-center text-white">Create Account</h2>
+        <p className="text-gray-400 text-center mb-4">Sign up to get started</p>
         <div className="flex justify-center items-center gap-4 mb-6 mt-4">
           <div
             className={`w-8 h-8 flex items-center justify-center rounded-full ${step >= 1 ? "bg-purple-500 text-white" : "bg-gray-300"}`}
@@ -116,7 +116,7 @@ export default function Signup() {
           </div>
         </div>
 
-        <div className="flex justify-center gap-10 text-sm text-gray-500 mb-6">
+        <div className="flex justify-center gap-10 text-sm text-gray-400 mb-6">
           <span>Basic Info</span>
           <span>Details</span>
           <span>Password</span>
@@ -124,21 +124,21 @@ export default function Signup() {
 
         {step === 1 && (
           <>
-            <label className="text-sm text-gray-600">Full Name</label>
+            <label className="text-sm text-gray-400">Full Name</label>
             <input
               name="fullName"
               placeholder="Enter your full name"
-              className="input mt-2"
+              className="w-full bg-white/10 border border-white/20 focus:ring-2 focus:ring-green-400 outline-none p-2 rounded text-white placeholder-gray-400 mt-2"
               onChange={handleChange}
             />
 
-            <label className="text-sm text-gray-600 mt-4 block">
+            <label className="text-sm text-gray-400 mt-4 block">
               Email Address
             </label>
             <input
               name="email"
               placeholder="Enter your email"
-              className="input mt-2"
+              className="w-full bg-white/10 border border-white/20 focus:ring-2 focus:ring-green-400 outline-none p-2 rounded text-white placeholder-gray-400 mt-2"
               onChange={handleChange}
             />
 
@@ -148,7 +148,7 @@ export default function Signup() {
                   setStep(2);
                 }
               }}
-              className="btn mt-6 w-full py-3"
+              className="w-full bg-green-400 hover:bg-green-500 text-black font-semibold py-3 rounded mt-6"
             >
               Continue →
             </button>
@@ -159,7 +159,7 @@ export default function Signup() {
             <input
               name="hostelName"
               placeholder="Hostel Name"
-              className="input"
+              className="w-full bg-white/10 border border-white/20 focus:ring-2 focus:ring-green-400 outline-none p-2 rounded text-white placeholder-gray-400"
               onChange={handleChange}
             />
 
@@ -167,35 +167,35 @@ export default function Signup() {
               name="messCode"
               value={form.messCode}
               placeholder="Enter Mess Code"
-              className="w-full mb-3 p-2 border rounded"
+              className="w-full mb-3 bg-white/10 border border-white/20 focus:ring-2 focus:ring-green-400 outline-none p-2 rounded text-white placeholder-gray-400"
               onChange={handleChange}
             />
 
             <input
               name="enrolmentNumber"
               placeholder="Enrollment Number"
-              className="input mt-3"
+              className="w-full bg-white/10 border border-white/20 focus:ring-2 focus:ring-green-400 outline-none p-2 rounded text-white placeholder-gray-400 mt-3"
               onChange={handleChange}
             />
 
             <input
               name="roomNumber"
               placeholder="Room Number"
-              className="input mt-3"
+              className="w-full bg-white/10 border border-white/20 focus:ring-2 focus:ring-green-400 outline-none p-2 rounded text-white placeholder-gray-400 mt-3"
               onChange={handleChange}
             />
 
             <input
               name="phone"
               placeholder="Phone Number"
-              className="input mt-3"
+              className="w-full bg-white/10 border border-white/20 focus:ring-2 focus:ring-green-400 outline-none p-2 rounded text-white placeholder-gray-400 mt-3"
               onChange={handleChange}
             />
 
             <div className="flex gap-2 mt-4">
               <button
                 onClick={() => setStep(1)}
-                className="w-full border py-2 rounded"
+                className="w-full border border-white/20 text-white py-2 rounded hover:bg-white/10"
               >
                 Back
               </button>
@@ -206,7 +206,7 @@ export default function Signup() {
                     setStep(3);
                   }
                 }}
-                className="btn w-full"
+                className="w-full bg-green-400 hover:bg-green-500 text-black font-semibold py-2 rounded transition"
               >
                 Next
               </button>
@@ -219,7 +219,7 @@ export default function Signup() {
               name="password"
               placeholder="Password"
               type="password"
-              className="input"
+              className="w-full bg-white/10 border border-white/20 focus:ring-2 focus:ring-green-400 outline-none p-2 rounded text-white placeholder-gray-400"
               onChange={handleChange}
             />
 
@@ -227,19 +227,19 @@ export default function Signup() {
               name="confirmPassword"
               placeholder="Confirm Password"
               type="password"
-              className="input mt-3"
+              className="w-full bg-white/10 border border-white/20 focus:ring-2 focus:ring-green-400 outline-none p-2 rounded text-white placeholder-gray-400 mt-3"
               onChange={handleChange}
             />
 
             <div className="flex gap-2 mt-4">
               <button
                 onClick={() => setStep(2)}
-                className="w-full border py-2 rounded"
+                className="w-full border border-white/20 text-white py-2 rounded hover:bg-white/10"
               >
                 Back
               </button>
 
-              <button onClick={handleSignup} className="btn w-full">
+              <button onClick={handleSignup} className="w-full bg-green-400 hover:bg-green-500 text-black font-semibold py-2 rounded transition">
                 Signup
               </button>
             </div>
@@ -249,16 +249,16 @@ export default function Signup() {
         <p className="text-sm mt-3 text-center">
           Already have an account?{" "}
           <span
-            className="text-blue-600 cursor-pointer"
+            className="text-green-400 cursor-pointer"
             onClick={() => navigate("/login")}
           >
             Login
           </span>
         </p>
-        <p className="text-sm mt-3 text-center text-gray-500">
+        <p className="text-sm mt-3 text-center text-gray-400">
           Are you an admin?{" "}
           <span
-            className="text-blue-600 cursor-pointer"
+            className="text-green-400 cursor-pointer"
             onClick={() => navigate("/admin/login")}
           >
             Admin Login

@@ -15,7 +15,7 @@ export default function MyFeedbacks() {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
 
         const result = await res.json();
@@ -30,26 +30,32 @@ export default function MyFeedbacks() {
 
   return (
     <StudentLayout>
-      <div className="max-w-3xl mx-auto px-4">
-        <h1 className="text-3xl font-bold mb-6">📜 My Feedback History</h1>
+      <div className="max-w-3xl mx-auto px-4 md:px-6">
+        <h1 className="text-xl md:text-3xl font-bold mb-6">
+          📜 My Feedback History
+        </h1>
 
         {data.length === 0 ? (
           <p className="text-gray-500">No feedback submitted yet.</p>
         ) : (
-          data.map((item) => (
-            <div
-              key={item._id}
-              className="bg-white border rounded-lg p-4 mb-4 shadow"
-            >
-              {/* Date */}
-              <p className="text-sm text-gray-500 mb-1">
-                {new Date(item.createdAt).toLocaleString()}
-              </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {data.map((item) => (
+              <div
+                key={item._id}
+                className="bg-white border rounded-lg p-3 md:p-4 mb-4 shadow"
+              >
+                {/* Date */}
+                <p className="text-sm text-gray-500 mb-1">
+                  {new Date(item.createdAt).toLocaleString()}
+                </p>
 
-              {/* Message */}
-              <p className="font-medium">{item.message}</p>
-            </div>
-          ))
+                <p className="text-xs text-gray-500 mb-1">🍽 {item.type}</p>
+                <p className="font-medium text-sm md:text-base">
+                  {item.message}
+                </p>
+              </div>
+            ))}
+          </div>
         )}
       </div>
     </StudentLayout>

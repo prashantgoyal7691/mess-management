@@ -60,7 +60,7 @@ export default function Complaints() {
 
   return (
     <StudentLayout>
-      <div className="max-w-3xl mx-auto px-4">
+      <div className="max-w-3xl mx-auto px-4 md:px-6">
         {/* Header */}
         <div className="flex justify-end mb-4">
           <button
@@ -71,20 +71,20 @@ export default function Complaints() {
           </button>
         </div>
         <div className="mb-6">
-          <h1 className="text-3xl font-bold">🚨 Complaints</h1>
+          <h1 className="text-xl md:text-3xl font-bold">🚨 Complaints</h1>
           <p className="text-gray-500">
             Report issues related to mess services
           </p>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow space-y-5 border">
+        <div className="bg-white p-4 md:p-6 rounded-lg shadow space-y-4 md:space-y-5 border">
           {/* Complaint Type */}
           <div>
             <p className="font-medium mb-2">Complaint Type</p>
             <select
               value={type}
               onChange={(e) => setType(e.target.value)}
-              className="w-full border rounded-lg p-3 focus:outline-none focus:border-red-500"
+              className="w-full border rounded-lg p-2 md:p-3 text-sm md:text-base focus:outline-none focus:border-red-500"
             >
               <option>Food Quality</option>
               <option>Mess Staff</option>
@@ -101,7 +101,7 @@ export default function Complaints() {
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="w-full border rounded-lg p-3 focus:outline-none focus:border-red-500"
+              className="w-full border rounded-lg p-2 md:p-3 text-sm md:text-base focus:outline-none focus:border-red-500"
             />
           </div>
 
@@ -113,7 +113,7 @@ export default function Complaints() {
               placeholder="Enter complaint title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full border rounded-lg p-3 focus:outline-none focus:border-red-500"
+              className="w-full border rounded-lg p-2 md:p-3 text-sm md:text-base focus:outline-none focus:border-red-500"
             />
           </div>
 
@@ -124,7 +124,7 @@ export default function Complaints() {
               placeholder="Describe the issue..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full border rounded-lg p-3 focus:outline-none focus:border-red-500"
+              className="w-full border rounded-lg p-2 md:p-3 text-sm md:text-base focus:outline-none focus:border-red-500"
               rows="4"
             />
           </div>

@@ -146,16 +146,16 @@ export default function Attendance() {
   return (
     <StudentLayout>
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6 px-4 md:px-0">
+        <h1 className="text-xl md:text-3xl font-bold">
           📊 Monthly Attendance ({months[selectedMonth]} {selectedYear})
         </h1>
 
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
           <select
             value={selectedMonth}
             onChange={(e) => setSelectedMonth(Number(e.target.value))}
-            className="border p-2 rounded"
+            className="border p-2 rounded w-full"
           >
             {months.map((m, i) => (
               <option key={i} value={i}>
@@ -168,7 +168,7 @@ export default function Attendance() {
             type="number"
             value={selectedYear}
             onChange={(e) => setSelectedYear(Number(e.target.value))}
-            className="border p-2 rounded w-24"
+            className="border p-2 rounded w-full sm:w-24"
           />
         </div>
       </div>
@@ -190,7 +190,7 @@ export default function Attendance() {
       </div>
 
       {/* Chart */}
-      <div className="bg-white p-6 rounded-2xl shadow overflow-x-auto">
+      <div className="bg-white p-4 md:p-6 rounded-2xl shadow overflow-x-auto mx-4 md:mx-0">
         <div className="flex items-end gap-5 h-64">
           {attendance.map((item) => (
             <div key={item.day} className="flex flex-col items-center">
@@ -221,7 +221,7 @@ export default function Attendance() {
       </div>
 
       {/* Bill */}
-      <div className="bg-white p-4 rounded-xl shadow mb-6">
+      <div className="bg-white p-4 md:p-5 rounded-xl shadow mb-6 mx-4 md:mx-0">
         <h2 className="text-xl font-semibold mb-3">💰 Monthly Bill</h2>
 
         <div className="grid grid-cols-2 gap-4 text-sm">

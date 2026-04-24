@@ -25,8 +25,8 @@ export default function Feedback() {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          type: "feedback",
-          message: `${meal} | ${rating}⭐ | ${message}`,
+          type: meal,
+          message: `${rating}⭐ | ${message}`,
         }),
       });
 
@@ -50,11 +50,11 @@ export default function Feedback() {
 
   return (
     <StudentLayout>
-      <div className="max-w-2xl mx-auto px-4">
+      <div className="max-w-2xl mx-auto px-4 md:px-6">
         {/* 🔥 Header */}
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold">⭐ Feedback</h1>
+            <h1 className="text-xl md:text-3xl font-bold">⭐ Feedback</h1>
             <p className="text-gray-500 text-sm">
               Share your experience about today's meals
             </p>
@@ -63,18 +63,18 @@ export default function Feedback() {
           {/* Premium Button */}
           <button
             onClick={() => navigate("/student/my-feedbacks")}
-            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 hover:shadow-lg transition-all"
+            className="flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 hover:shadow-lg transition-all w-full sm:w-auto"
           >
             📜 History
           </button>
         </div>
 
         {/* 🔥 Card */}
-        <div className="bg-white p-6 rounded-2xl shadow-md border space-y-6">
+        <div className="bg-white p-4 md:p-6 rounded-2xl shadow-md border space-y-4 md:space-y-6">
           {/* Meal Selection */}
           <div>
             <p className="font-medium mb-2 text-gray-700">Select Meal</p>
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-2 sm:gap-3">
               {["Breakfast", "Lunch", "Dinner"].map((item) => (
                 <button
                   key={item}
@@ -120,7 +120,7 @@ export default function Feedback() {
               placeholder="Write your feedback..."
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              className="w-full border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+              className="w-full border p-2 md:p-3 rounded-lg text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
             />
           </div>
 

@@ -9,11 +9,31 @@ export const createFeedback = async (req, res) => {
     const user = await User.findById(userId);
 
     const { type, message } = req.body;
+    const today = new Date().toISOString().split("T")[0];
 
-    const feedback = await Feedback.create({
+    // 🔍 Check if feedback already exists for same meal & date
+    const existing = await Feedback.findOne({
+      userId,
+      type,
+      date: today,
+    });
+
+    let feedback;
+
+    if (existing) {
+      // 🔁 Update existing feedback
+      existing.message = message;
+      feedback = await existing.save();
+
+      return res.json({ message: "Feedback updated", feedback });
+    }
+
+    // ➕ Create new feedback if not exists
+    feedback = await Feedback.create({
       userId,
       messId: user.messId,
       type,
+      date: today,
       message,
     });
 

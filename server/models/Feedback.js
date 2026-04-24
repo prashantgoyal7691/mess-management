@@ -12,9 +12,13 @@ const feedbackSchema = new mongoose.Schema(
       ref: "Admin",
       required: true,
     },
+    date: {
+      type: String, // format: YYYY-MM-DD
+      required: true,
+    },
     type: {
       type: String,
-      enum: ["feedback", "complaint"],
+      enum: ["Breakfast", "Lunch", "Dinner"],
       required: true,
     },
     message: {
@@ -22,7 +26,7 @@ const feedbackSchema = new mongoose.Schema(
       required: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export default mongoose.model("Feedback", feedbackSchema);

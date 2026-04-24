@@ -36,50 +36,52 @@ export default function MyComplaints() {
 
   return (
     <StudentLayout>
-      <div className="max-w-3xl mx-auto px-4">
-        <h1 className="text-3xl font-bold mb-6">📜 My Complaints</h1>
+      <div className="max-w-3xl mx-auto px-4 md:px-6">
+        <h1 className="text-xl md:text-3xl font-bold mb-6">📜 My Complaints</h1>
 
         {complaints.length === 0 ? (
           <p className="text-gray-500">No complaints submitted yet.</p>
         ) : (
-          complaints.map((item) => (
-            <div
-              key={item._id}
-              className="bg-white border rounded-lg p-5 mb-4 shadow"
-            >
-              {/* Header */}
-              <div className="flex justify-between items-center mb-2">
-                <p className="font-semibold">{item.category}</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {complaints.map((item) => (
+              <div
+                key={item._id}
+                className="bg-white border rounded-lg p-4 md:p-5 mb-4 shadow"
+              >
+                {/* Header */}
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-2">
+                  <p className="font-medium text-sm md:text-base">{item.category}</p>
 
-                <span
-                  className={`px-3 py-1 text-sm rounded-full ${getStatusColor(
-                    item.status
-                  )}`}
-                >
-                  {item.status}
-                </span>
-              </div>
-
-              {/* Date */}
-              <p className="text-sm text-gray-500 mb-2">
-                {item.date}
-              </p>
-
-              {/* Title */}
-              <p className="font-medium">{item.title}</p>
-
-              {/* Description */}
-              <p className="text-gray-600">{item.description}</p>
-
-              {/* Reply */}
-              {item.reply && (
-                <div className="mt-3 p-3 bg-gray-100 rounded">
-                  <p className="text-sm font-medium">Admin Reply:</p>
-                  <p className="text-sm text-gray-700">{item.reply}</p>
+                  <span
+                    className={`px-3 py-1 text-sm rounded-full ${getStatusColor(
+                      item.status
+                    )}`}
+                  >
+                    {item.status}
+                  </span>
                 </div>
-              )}
-            </div>
-          ))
+
+                {/* Date */}
+                <p className="text-sm text-gray-500 mb-2">
+                  {item.date}
+                </p>
+
+                {/* Title */}
+                <p className="font-medium text-sm md:text-base">{item.title}</p>
+
+                {/* Description */}
+                <p className="text-gray-600">{item.description}</p>
+
+                {/* Reply */}
+                {item.reply && (
+                  <div className="mt-3 p-3 bg-gray-100 rounded">
+                    <p className="text-sm font-medium">Admin Reply:</p>
+                    <p className="text-sm text-gray-700">{item.reply}</p>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
         )}
       </div>
     </StudentLayout>
