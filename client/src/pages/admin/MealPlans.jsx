@@ -129,7 +129,7 @@ export default function MealPlans() {
   return (
     <AdminLayout>
       <div className="p-4 md:p-6">
-        <h1 className="text-xl md:text-2xl font-bold mb-4">🍽 Weekly Menu Planner</h1>
+        <h1 className="text-xl md:text-2xl font-bold mb-4">Weekly Menu Planner</h1>
 
         <div className="bg-white shadow rounded-lg p-4 md:p-6">
           <div className="overflow-x-auto">

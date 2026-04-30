@@ -5,14 +5,14 @@ export default function Sidebar({ isOpen, setIsOpen }) {
   const location = useLocation();
 
   const menu = [
-    { name: "Dashboard", path: "/admin/dashboard", icon: "📊" },
-    { name: "Students", path: "/admin/students", icon: "👨‍🎓" },
-    { name: "Reports", path: "/admin/reports", icon: "📅" },
-    { name: "Plan Menu", path: "/admin/meal-plans", icon: "💰" },
-    { name: "Feedbacks", path: "/admin/feedbacks", icon: "📢" },
-    { name: "Complaints", path: "/admin/complaints", icon: "📢" },
-    { name: "Admin Details", path: "/admin/details", icon: "👤" },
-    { name: "Set Expense", path: "/admin/set-expense", icon: "💰" },
+    { name: "Dashboard", path: "/admin/dashboard" },
+    { name: "Students", path: "/admin/students", },
+    { name: "Reports", path: "/admin/reports" },
+    { name: "Plan Menu", path: "/admin/meal-plans" },
+    { name: "Feedbacks", path: "/admin/feedbacks" },
+    { name: "Complaints", path: "/admin/complaints" },
+    { name: "Admin Details", path: "/admin/details" },
+    { name: "Set Expense", path: "/admin/set-expense" },
   ];
 
   const handleLogout = () => {
@@ -38,7 +38,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
       `}
       >
         <div>
-          <h2 className="text-xl font-semibold mb-8 text-white">🍽 Mess Admin</h2>
+          <h2 className="text-xl font-semibold mb-8 text-white">Mess Admin</h2>
 
           <div className="flex flex-col gap-2">
             {menu.map((item) => (
@@ -54,7 +54,6 @@ export default function Sidebar({ isOpen, setIsOpen }) {
                     : "hover:bg-gray-800 hover:text-white text-gray-400"
                 }`}
               >
-                <span>{item.icon}</span>
                 <span>{item.name}</span>
               </button>
             ))}

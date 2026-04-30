@@ -64,7 +64,7 @@ export default function ComplaintsAdmin() {
   return (
     <AdminLayout>
       <div className="p-4 md:p-6">
-        <h1 className="text-xl md:text-2xl font-bold mb-4">🚨 Complaints</h1>
+        <h1 className="text-xl md:text-2xl font-bold mb-4 ">Complaints</h1>
 
         {complaints.map((item) => (
           <div key={item._id} className="bg-white p-4 md:p-5 rounded-lg shadow mb-4">

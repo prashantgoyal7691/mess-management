@@ -127,7 +127,7 @@ export default function Students() {
   return (
     <AdminLayout>
       <div className="p-4 md:p-6">
-        <h1 className="text-xl md:text-2xl font-bold mb-6">👨‍🎓 Students</h1>
+        <h1 className="text-xl md:text-2xl font-bold mb-6">Students</h1>
       </div>
 
       <div className="bg-white rounded-xl shadow overflow-hidden">

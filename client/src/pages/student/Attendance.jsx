@@ -148,7 +148,7 @@ export default function Attendance() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6 px-4 md:px-0">
         <h1 className="text-xl md:text-3xl font-bold">
-          📊 Monthly Attendance ({months[selectedMonth]} {selectedYear})
+          Monthly Attendance ({months[selectedMonth]} {selectedYear})
         </h1>
 
         <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
@@ -220,9 +220,8 @@ export default function Attendance() {
         </div>
       </div>
 
-      {/* Bill */}
       <div className="bg-white p-4 md:p-5 rounded-xl shadow mb-6 mx-4 md:mx-0">
-        <h2 className="text-xl font-semibold mb-3">💰 Monthly Bill</h2>
+        <h2 className="text-xl font-semibold mb-3">Monthly Bill</h2>
 
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div className="col-span-2 font-bold text-lg mt-2">

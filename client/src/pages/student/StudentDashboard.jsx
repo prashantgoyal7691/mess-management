@@ -25,7 +25,7 @@ export default function StudentDashboard() {
           onClick={() => navigate("/student/attendance")}
           className="bg-white p-4 md:p-5 rounded-xl shadow hover:shadow-lg cursor-pointer"
         >
-          <h2 className="text-lg font-semibold">📸 Attendance</h2>
+          <h2 className="text-lg font-semibold">Attendance</h2>
           <p className="text-gray-500 mt-2">View your attendance</p>
         </div>
 
@@ -33,14 +33,14 @@ export default function StudentDashboard() {
           onClick={() => navigate("/student/feedback")}
           className="bg-white p-4 md:p-5 rounded-xl shadow hover:shadow-lg cursor-pointer"
         >
-          <h2 className="text-lg font-semibold">⭐ Feedback</h2>
+          <h2 className="text-lg font-semibold">Feedback</h2>
           <p className="text-gray-500 mt-2">Rate your meals</p>
         </div>
         <div
           onClick={() => navigate("/student/details")}
           className="bg-white p-4 md:p-5 rounded-xl shadow hover:shadow-lg cursor-pointer"
         >
-          <h2 className="text-lg font-semibold">👤 Student Details</h2>
+          <h2 className="text-lg font-semibold">Student Details</h2>
           <p className="text-gray-500 mt-2">View your profile details</p>
         </div>
       </div>

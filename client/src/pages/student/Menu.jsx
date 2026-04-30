@@ -149,7 +149,7 @@ export default function Menu() {
 
   return (
     <StudentLayout>
-      <h1 className="text-xl md:text-3xl font-bold mb-6 px-4 md:px-0">🍽️ Weekly Menu</h1>
+      <h1 className="text-xl md:text-3xl font-bold mb-6 px-4 md:px-0">Weekly Menu</h1>
 
       <div className="bg-white p-4 md:p-6 rounded-2xl shadow overflow-x-auto mx-4 md:mx-0">
         <table className="w-full border-collapse">

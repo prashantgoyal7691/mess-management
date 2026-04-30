@@ -54,7 +54,7 @@ export default function Feedback() {
         {/* 🔥 Header */}
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
           <div>
-            <h1 className="text-xl md:text-3xl font-bold">⭐ Feedback</h1>
+            <h1 className="text-xl md:text-3xl font-bold">Feedback</h1>
             <p className="text-gray-500 text-sm">
               Share your experience about today's meals
             </p>
@@ -65,7 +65,7 @@ export default function Feedback() {
             onClick={() => navigate("/student/my-feedbacks")}
             className="flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 hover:shadow-lg transition-all w-full sm:w-auto"
           >
-            📜 History
+            History
           </button>
         </div>
 

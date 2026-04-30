@@ -46,11 +46,11 @@ export default function StudentHistory() {
   return (
     <AdminLayout>
       <div className="p-4 md:p-6">
-        <h1 className="text-xl md:text-2xl font-bold mb-4">📊 Student Meal History</h1>
+        <h1 className="text-xl md:text-2xl font-bold mb-4">Student Meal History</h1>
         {student && (
           <div className="bg-white p-4 md:p-5 rounded-xl shadow mb-4">
-            <h2 className="text-xl font-bold">👤 {student.name}</h2>
-            <p className="text-gray-600">🎓 {student.enrolment}</p>
+            <h2 className="text-xl font-bold">{student.name}</h2>
+            <p className="text-gray-600">{student.enrolment}</p>
           </div>
         )}
         <input

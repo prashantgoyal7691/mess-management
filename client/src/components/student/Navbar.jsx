@@ -26,7 +26,7 @@ export default function Navbar({ setIsOpen }) {
           />
         )}
 
-        <span className="text-gray-700 font-medium text-sm md:text-base truncate max-w-[120px] md:max-w-none">
+        <span className="text-gray-200 font-medium text-sm md:text-base truncate max-w-[120px] md:max-w-none">
           {user?.fullName || user?.email || "User"}
         </span>
       </div>

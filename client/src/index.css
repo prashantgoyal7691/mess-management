@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+  font-family:sans-serif;
+  cursor: default;
+}
 .input {
   width: 100%;
   border: 1px solid #d1d5db;
@@ -25,4 +29,28 @@
 
 .btn:hover {
   background-color: #16a34a;
+}
+
+@keyframes floatPhone {
+  0% {
+    transform: translate(0px, 0px);
+  }
+
+  50% {
+    transform: translate(-8px, 10px); /* slight left-up */
+  }
+  100% {
+    transform: translate(0px, 0px);
+  }
+}
+
+.animate-floatPhone {
+  animation: floatPhone 2s ease-in-out infinite;
+}
+
+* {
+  caret-color: transparent;
+}
+input, textarea {
+  caret-color: auto;
 }

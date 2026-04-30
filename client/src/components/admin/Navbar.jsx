@@ -28,7 +28,7 @@ export default function Navbar({ setIsOpen }) {
         {currentPage}
       </h1>
 
-      <div className="text-sm text-gray-400">{admin?.fullName}</div>
+      <div className="text-sm text-gray-100">{admin?.fullName}</div>
     </div>
   );
 }

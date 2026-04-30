@@ -47,7 +47,7 @@ export default function AdminLogin() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 px-4">
       <div className="bg-white/5 backdrop-blur-lg border border-white/10 p-8 rounded-2xl shadow-2xl w-full max-w-md text-center">
-        <h2 className="text-2xl font-bold mb-2 text-white">👨‍💼 Admin Login</h2>
+        <h2 className="text-2xl font-bold mb-2 text-white">Admin Login</h2>
 
         <input
           type="email"
@@ -77,7 +77,7 @@ export default function AdminLogin() {
         >
           Forgot Password?
         </p>
-        <p className="text-sm mt-4 text-center">
+        <p className="text-sm mt-4 text-center text-gray-400">
           Don't have an account?{" "}
           <span
             className="text-blue-400 cursor-pointer"

@@ -26,7 +26,7 @@ export default function StudentDetailsAdmin() {
   return (
     <AdminLayout>
       <div className="p-4 md:p-6">
-        <h1 className="text-xl md:text-2xl font-bold mb-6">👤 Student Profile</h1>
+        <h1 className="text-xl md:text-2xl font-bold mb-6">Student Profile</h1>
 
         <div className="bg-white p-4 md:p-6 rounded-xl shadow grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
           <div className="flex flex-col text-sm md:text-base"><span className="font-semibold">Name:</span> {student.fullName}</div>

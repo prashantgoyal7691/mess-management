@@ -40,7 +40,7 @@ export default function SetExpense() {
 
       const data = await res.json();
 
-      alert("Expense saved for tomorrow ✅");
+      alert("Expense saved for tomorrow");
     } catch (err) {
       console.log(err);
       alert("Error saving expense");
@@ -55,12 +55,12 @@ export default function SetExpense() {
             onClick={() => navigate("/admin/expense-history")}
             className="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900 text-sm"
           >
-            📊 View Expense History
+            View Expense History
           </button>
         </div>
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
           <h1 className="text-xl md:text-3xl font-bold">
-            💰 Set Expense for {date}
+            Set Expense for {date}
           </h1>
 
           

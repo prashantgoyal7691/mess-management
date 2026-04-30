@@ -1,26 +1,20 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import {
-  FaHome,
-  FaUtensils,
-  FaStar,
-  FaExclamationCircle,
-  FaUser,
-} from "react-icons/fa";
 
 export default function Sidebar({ isOpen, setIsOpen }) {
   const navigate = useNavigate();
   const location = useLocation();
 
   const menuItems = [
-    { name: "Dashboard", path: "/student/dashboard", icon: <FaHome /> },
-    { name: "Menu", path: "/student/menu", icon: <FaUtensils /> },
-    { name: "Feedback", path: "/student/feedback", icon: <FaStar /> },
+    { name: "Dashboard", path: "/student/dashboard"},
+    { name: "Attendance", path: "/student/attendance"},
+    { name: "Menu", path: "/student/menu"},
+    { name: "Feedback", path: "/student/feedback"},
     {
       name: "Complaints",
       path: "/student/complaints",
-      icon: <FaExclamationCircle />,
     },
-    { name: "Student Details", path: "/student/details", icon: <FaUser /> },
+    { name: "Student Details", path: "/student/details"},
+
   ];
 
   const handleLogout = () => {

@@ -32,7 +32,7 @@ export default function MyFeedbacks() {
     <StudentLayout>
       <div className="max-w-3xl mx-auto px-4 md:px-6">
         <h1 className="text-xl md:text-3xl font-bold mb-6">
-          📜 My Feedback History
+          My Feedback History
         </h1>
 
         {data.length === 0 ? (

@@ -46,7 +46,7 @@ export default function FeedbacksAdmin() {
   return (
     <AdminLayout>
       <div className="p-4 md:p-6">
-        <h1 className="text-xl md:text-2xl font-bold mb-4">📢 Feedbacks</h1>
+        <h1 className="text-xl md:text-2xl font-bold mb-4">Feedbacks</h1>
 
         {data.map(([date, feedbacks]) => (
           <div key={date} className="mb-4 border rounded">
@@ -55,7 +55,7 @@ export default function FeedbacksAdmin() {
               onClick={() => setOpenDate(openDate === date ? null : date)}
               className="cursor-pointer p-3 bg-gray-100 font-semibold flex flex-col sm:flex-row sm:justify-between gap-1"
             >
-              <span>📅 {date}</span>
+              <span>{date}</span>
               <span>({feedbacks.length})</span>
             </div>
 
@@ -72,7 +72,7 @@ export default function FeedbacksAdmin() {
                       {item.userId?.enrolmentNumber || "-"})
                     </p>
 
-                    <p className="text-xs text-gray-500 mb-1">🍽 {item.type}</p>
+                    <p className="text-xs text-gray-500 mb-1">{item.type}</p>
                     <p>{item.message}</p>
                   </div>
                 ))}

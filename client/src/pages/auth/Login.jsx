@@ -67,7 +67,7 @@ export default function Login() {
           Forgot Password?
         </p>
 
-        <p className="text-sm mt-4 text-center">
+        <p className="text-sm mt-4 text-center text-gray-400">
           Don't have an account?{" "}
           <span
             className="text-blue-600 cursor-pointer"
@@ -76,7 +76,7 @@ export default function Login() {
             Create Account
           </span>
         </p>
-        <p className="text-sm mt-3 text-center text-gray-500">
+        <p className="text-sm mt-3 text-center text-gray-400">
           Are you an admin?{" "}
           <span
             className="text-blue-600 cursor-pointer"

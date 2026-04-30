@@ -66,7 +66,7 @@ export default function AdminSignup() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 px-4">
       <div className="bg-white/5 backdrop-blur-lg border border-white/10 p-8 rounded-2xl shadow-2xl w-full max-w-md text-center">
-        <h2 className="text-2xl font-bold mb-2 text-white">👨‍💼 Admin Signup</h2>
+        <h2 className="text-2xl font-bold mb-2 text-white">Admin Signup</h2>
 
         {step === 1 && (
           <>

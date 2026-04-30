@@ -37,7 +37,7 @@ export default function MyComplaints() {
   return (
     <StudentLayout>
       <div className="max-w-3xl mx-auto px-4 md:px-6">
-        <h1 className="text-xl md:text-3xl font-bold mb-6">📜 My Complaints</h1>
+        <h1 className="text-xl md:text-3xl font-bold mb-6">My Complaints</h1>
 
         {complaints.length === 0 ? (
           <p className="text-gray-500">No complaints submitted yet.</p>

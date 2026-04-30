@@ -32,7 +32,7 @@ export default function ExpenseHistory() {
     <AdminLayout>
       <div className="p-4 md:p-6">
         <h1 className="text-xl md:text-3xl font-bold mb-6">
-          📊 Expense History
+          Expense History
         </h1>
 
         <div className="bg-white rounded-xl shadow overflow-x-auto">
@@ -88,7 +88,7 @@ export default function ExpenseHistory() {
             </tbody>
           </table>
         </div>
-        <button
+        {/* <button
           onClick={async () => {
             try {
               const token = localStorage.getItem("adminToken");
@@ -111,8 +111,8 @@ export default function ExpenseHistory() {
           }}
           className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 text-sm"
         >
-          🔒 Run Lock Now
-        </button>
+          Run Lock Now
+        </button> */}
       </div>
     </AdminLayout>
   );
