@@ -3,13 +3,18 @@ import { useNavigate } from "react-router-dom";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSendOtp = async () => {
+    if (loading) return;
+
     if (!email) {
       alert("Please enter email");
       return;
     }
+
+    setLoading(true);
 
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/forgot-password`, {
@@ -24,6 +29,7 @@ export default function ForgotPassword() {
 
       if (!res.ok) {
         alert(data.message);
+        setLoading(false);
         return;
       }
 
@@ -34,6 +40,7 @@ export default function ForgotPassword() {
     } catch (err) {
       console.log(err);
       alert("Something went wrong");
+      setLoading(false);
     }
   };
 
@@ -56,9 +63,10 @@ export default function ForgotPassword() {
 
         <button
           onClick={handleSendOtp}
-          className="bg-green-400 hover:bg-green-500 text-black font-semibold py-2 rounded-lg w-full"
+          disabled={loading}
+          className={`bg-green-400 text-black font-semibold py-2 rounded-lg w-full ${loading ? "opacity-50 cursor-not-allowed" : "hover:bg-green-500"}`}
         >
-          Send OTP
+          {loading ? "Sending..." : "Send OTP"}
         </button>
 
         <p

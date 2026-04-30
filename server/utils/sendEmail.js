@@ -30,6 +30,7 @@ Valid for 5 minutes.
         <p>Valid for 5 minutes</p>
       `,
     });
+    console.log("OTP email sent to:", email);
 
   } catch (err) {
     console.log("Email sending error:", err);
@@ -57,6 +58,7 @@ export const sendApprovalEmail = async (email, message) => {
       subject: "Account Approved",
       text: message,
     });
+    console.log("Approval email sent to:", email);
   } catch (err) {
     console.log("EMAIL ERROR:", err);
   }
@@ -81,6 +83,7 @@ export const sendRejectionEmail = async (email, message) => {
       subject: "Account Rejected ❌",
       text: message,
     });
+    console.log("Rejection email sent to:", email);
   } catch (err) {
     console.log("REJECTION EMAIL ERROR:", err);
   }
@@ -104,6 +107,7 @@ export const sendPendingEmail = async (email, message) => {
       subject: "Account Pending Approval ⏳",
       text: message,
     });
+    console.log("Pending email sent to:", email);
   } catch (err) {
     console.log("PENDING EMAIL ERROR:", err);
   }
@@ -128,6 +132,7 @@ export const sendDeleteEmail = async (email, message) => {
       subject: "Account Deleted ⚠️",
       text: message,
     });
+    console.log("Delete email sent to:", email);
   } catch (err) {
     console.log("DELETE EMAIL ERROR:", err);
   }

@@ -6,6 +6,7 @@ export default function Signup() {
   const location = useLocation();
   const prefilledMessCode = location.state?.messCode || "";
   const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     fullName: "",
     email: "",
@@ -23,6 +24,8 @@ export default function Signup() {
   };
 
   const handleSignup = async () => {
+    if (loading) return;
+
     const {
       fullName,
       email,
@@ -49,6 +52,8 @@ export default function Signup() {
       return;
     }
 
+    setLoading(true);
+
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/signup`, {
         method: "POST",
@@ -60,11 +65,19 @@ export default function Signup() {
 
       const data = await res.json();
 
+      if (!res.ok) {
+        alert(data.message);
+        setLoading(false);
+        return;
+      }
+
       alert(data.message);
 
       navigate("/verify-otp", { state: { email } });
+
     } catch (err) {
       console.log(err);
+      setLoading(false);
     }
   };
 
@@ -239,8 +252,12 @@ export default function Signup() {
                 Back
               </button>
 
-              <button onClick={handleSignup} className="w-full bg-green-400 hover:bg-green-500 text-black font-semibold py-2 rounded transition">
-                Signup
+              <button
+                onClick={handleSignup}
+                disabled={loading}
+                className={`w-full bg-green-400 text-black font-semibold py-2 rounded transition ${loading ? "opacity-50 cursor-not-allowed" : "hover:bg-green-500"}`}
+              >
+                {loading ? "Signing up..." : "Signup"}
               </button>
             </div>
           </>

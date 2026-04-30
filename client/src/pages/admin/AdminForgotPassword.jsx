@@ -3,9 +3,14 @@ import { useNavigate } from "react-router-dom";
 
 export default function AdminForgotPassword() {
   const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSendOtp = async () => {
+    if (loading) return;
+
+    setLoading(true);
+
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/forgot-password`, {
         method: "POST",
@@ -19,12 +24,15 @@ export default function AdminForgotPassword() {
 
       if (!res.ok) {
         alert(data.message);
+        setLoading(false);
         return;
       }
 
       navigate("/admin/reset-password", { state: { email } });
+
     } catch (err) {
       console.log(err);
+      setLoading(false);
     }
   };
 
@@ -42,9 +50,10 @@ export default function AdminForgotPassword() {
 
         <button
           onClick={handleSendOtp}
-          className="w-full bg-green-400 hover:bg-green-500 text-black font-semibold p-2 rounded"
+          disabled={loading}
+          className={`w-full bg-green-400 text-black font-semibold p-2 rounded ${loading ? "opacity-50 cursor-not-allowed" : "hover:bg-green-500"}`}
         >
-          Send OTP
+          {loading ? "Sending..." : "Send OTP"}
         </button>
       </div>
     </div>

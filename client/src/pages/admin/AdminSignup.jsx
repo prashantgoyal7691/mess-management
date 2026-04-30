@@ -5,6 +5,7 @@ export default function AdminSignup() {
   const navigate = useNavigate();
 
   const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     fullName: "",
     email: "",
@@ -19,26 +20,37 @@ export default function AdminSignup() {
   };
 
   const sendOtp = async () => {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/send-otp`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: form.email,
-        messName: form.messName,
-      }),
-    });
+    if (loading) return;
 
-    const data = await res.json();
+    setLoading(true);
 
-    if (!res.ok) {
-      alert(data.message);
-      return;
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/send-otp`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: form.email,
+          messName: form.messName,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.message);
+        setLoading(false);
+        return;
+      }
+
+      alert("OTP sent");
+      setStep(2);
+
+    } catch (err) {
+      console.log(err);
+      setLoading(false);
     }
-
-    alert("OTP sent");
-    setStep(2);
   };
 
   const verifyOtp = async () => {
@@ -125,9 +137,10 @@ export default function AdminSignup() {
 
             <button
               onClick={sendOtp}
-              className="bg-green-400 hover:bg-green-500 text-black font-semibold py-2 rounded-lg w-full"
+              disabled={loading}
+              className={`bg-green-400 text-black font-semibold py-2 rounded-lg w-full ${loading ? "opacity-50 cursor-not-allowed" : "hover:bg-green-500"}`}
             >
-              Send OTP
+              {loading ? "Sending..." : "Send OTP"}
             </button>
 
             <p className="text-sm mt-4 text-gray-400">
