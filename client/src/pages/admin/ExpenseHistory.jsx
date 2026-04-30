@@ -15,7 +15,7 @@ export default function ExpenseHistory() {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
 
         const data = await res.json();
@@ -55,10 +55,7 @@ export default function ExpenseHistory() {
                 </tr>
               ) : (
                 history.map((item) => (
-                  <tr
-                    key={item.date}
-                    className="border-t hover:bg-gray-50"
-                  >
+                  <tr key={item.date} className="border-t hover:bg-gray-50">
                     {/* Date */}
                     <td className="p-3 font-medium">{item.date}</td>
 
@@ -91,6 +88,31 @@ export default function ExpenseHistory() {
             </tbody>
           </table>
         </div>
+        <button
+          onClick={async () => {
+            try {
+              const token = localStorage.getItem("adminToken");
+
+              const res = await fetch(
+                `${import.meta.env.VITE_API_URL}/api/billing/run-lock`,
+                {
+                  method: "POST",
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                  },
+                },
+              );
+
+              const data = await res.json();
+              alert(data.message);
+            } catch (err) {
+              console.log(err);
+            }
+          }}
+          className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 text-sm"
+        >
+          🔒 Run Lock Now
+        </button>
       </div>
     </AdminLayout>
   );
