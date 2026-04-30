@@ -9,7 +9,8 @@ import adminRoutes from "./routes/adminRoutes.js";
 import feedbackRoutes from "./routes/feedbackRoutes.js";
 import complaintRoutes from "./routes/complaintRoutes.js";
 import billingRoutes from "./routes/billingRoutes.js";
-
+import cron from "node-cron";
+import { lockOldMeals } from "./jobs/lockMeals.js";
 
 
 dotenv.config();
@@ -43,6 +44,11 @@ app.get("/api/protected", authMiddleware, (req, res) => {
     message: "Protected route accessed",
     user: req.user,
   });
+});
+
+cron.schedule("0 0 * * *", async () => {
+  console.log("Running meal lock job...");
+  await lockOldMeals();
 });
 
 // DB connect

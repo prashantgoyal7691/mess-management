@@ -1,9 +1,10 @@
 import { useState } from "react";
 import AdminLayout from "../../layouts/AdminLayout";
+import { useNavigate } from "react-router-dom";
 
 const getISTDate = (date = new Date()) => {
   return new Date(
-    date.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+    date.toLocaleString("en-US", { timeZone: "Asia/Kolkata" }),
   ).toLocaleDateString("en-CA");
 };
 
@@ -11,6 +12,7 @@ export default function SetExpense() {
   const [breakfastCost, setBreakfastCost] = useState("");
   const [lunchCost, setLunchCost] = useState("");
   const [dinnerCost, setDinnerCost] = useState("");
+  const navigate = useNavigate();
 
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
@@ -33,7 +35,7 @@ export default function SetExpense() {
             lunchCost,
             dinnerCost,
           }),
-        }
+        },
       );
 
       const data = await res.json();
@@ -48,9 +50,21 @@ export default function SetExpense() {
   return (
     <AdminLayout>
       <div className="max-w-xl mx-auto p-4 md:p-6">
-        <h1 className="text-xl md:text-3xl font-bold mb-6">
-          💰 Set Expense for {date}
-        </h1>
+        <div className="flex justify-end mb-4">
+          <button
+            onClick={() => navigate("/admin/expense-history")}
+            className="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900 text-sm"
+          >
+            📊 View Expense History
+          </button>
+        </div>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+          <h1 className="text-xl md:text-3xl font-bold">
+            💰 Set Expense for {date}
+          </h1>
+
+          
+        </div>
 
         <div className="bg-white p-4 md:p-6 rounded-xl shadow space-y-4">
           <input

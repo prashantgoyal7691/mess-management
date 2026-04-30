@@ -2,6 +2,7 @@ import DailyExpense from "../models/DailyExpense.js";
 import MealPlan from "../models/MealPlan.js";
 import StudentBill from "../models/StudentBill.js";
 import User from "../models/User.js";
+import { lockOldMeals } from "../jobs/lockMeals.js";
 
 // ADMIN SET EXPENSE
 export const setDailyExpense = async (req, res) => {
@@ -248,5 +249,76 @@ export const getMyDynamicBills = async (req, res) => {
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "Error calculating dynamic bills" });
+  }
+};
+
+
+export const getExpenseHistory = async (req, res) => {
+  try {
+    const adminId = req.user.id;
+
+    // 🔹 Get all expenses for this admin
+    const expenses = await DailyExpense.find({
+      messId: adminId,
+    }).sort({ date: -1 });
+
+    const result = [];
+
+    for (const exp of expenses) {
+      const date = exp.date;
+
+      // 🔥 Count students per meal
+      const breakfastCount = await MealPlan.countDocuments({
+        date,
+        meal: "breakfast",
+        status: "eat",
+        locked: true,
+        messId: adminId,
+      });
+
+      const lunchCount = await MealPlan.countDocuments({
+        date,
+        meal: "lunch",
+        status: "eat",
+        locked: true,
+        messId: adminId,
+      });
+
+      const dinnerCount = await MealPlan.countDocuments({
+        date,
+        meal: "dinner",
+        status: "eat",
+        locked: true,
+        messId: adminId,
+      });
+
+      result.push({
+        date,
+        breakfastCost: exp.breakfastCost,
+        lunchCost: exp.lunchCost,
+        dinnerCost: exp.dinnerCost,
+        breakfastCount,
+        lunchCount,
+        dinnerCount,
+      });
+    }
+
+    res.json(result);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Error fetching expense history" });
+  }
+};
+
+
+
+export const runLockNow = async (req, res) => {
+  try {
+    await lockOldMeals();
+
+    res.json({ message: "Meals locked successfully (manual trigger)" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Error running lock" });
   }
 };

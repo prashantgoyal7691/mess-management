@@ -377,16 +377,16 @@ export const getTodayReport = async (req, res) => {
     const adminId = req.user.id;
 
     const today = new Date(
-  new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
-).toLocaleDateString("en-CA");
+      new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+    ).toLocaleDateString("en-CA");
 
+    // 🔹 Get expense (may or may not exist)
     const expense = await DailyExpense.findOne({
       date: today,
       messId: adminId,
     });
 
-    if (!expense) return res.json([]);
-
+    // 🔹 Counts (safe even if expense not present)
     const breakfastCount = await MealPlan.countDocuments({
       date: today,
       meal: "breakfast",
@@ -408,13 +408,23 @@ export const getTodayReport = async (req, res) => {
       messId: adminId,
     });
 
+    // 🔹 Rates (if no expense → 0)
     const breakfastRate =
-      breakfastCount > 0 ? expense.breakfastCost / breakfastCount : 0;
+      expense && breakfastCount > 0
+        ? expense.breakfastCost / breakfastCount
+        : 0;
 
-    const lunchRate = lunchCount > 0 ? expense.lunchCost / lunchCount : 0;
+    const lunchRate =
+      expense && lunchCount > 0
+        ? expense.lunchCost / lunchCount
+        : 0;
 
-    const dinnerRate = dinnerCount > 0 ? expense.dinnerCost / dinnerCount : 0;
+    const dinnerRate =
+      expense && dinnerCount > 0
+        ? expense.dinnerCost / dinnerCount
+        : 0;
 
+    // 🔹 Get all students (IMPORTANT CHANGE)
     const students = await User.find({ messId: adminId });
 
     const report = [];

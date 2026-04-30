@@ -26,7 +26,7 @@ export default function Menu() {
 
       arr.push({
         day: d.toLocaleDateString("en-US", { weekday: "long" }),
-        date: getISTDate(d), // ✅ FIXED
+        date: getISTDate(d),
         displayDate: d.toLocaleDateString("en-IN", {
           day: "2-digit",
           month: "short",
@@ -192,7 +192,7 @@ export default function Menu() {
                       </div>
 
                       <span className="text-lg">
-                        {plans[`${item.date}-${meal}`] === "skip" ? "❌" : "✅"}
+                        {plans[`${item.date}-${meal}`] === "eat" ? "✅" : "❌"}
                       </span>
                     </div>
                   </td>

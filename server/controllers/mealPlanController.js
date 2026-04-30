@@ -47,6 +47,7 @@ export const setMealPlan = async (req, res) => {
         {
           status: finalStatus,
           messId: user?.messId,
+          locked: isLocked(date), 
         },
         { upsert: true, returnDocument: "after" }
       );
@@ -80,6 +81,7 @@ export const getMonthlyAttendance = async (req, res) => {
     const plans = await MealPlan.find({
       userId,
       date: { $regex: `^${month}` },
+      locked: true,
     });
 
     res.json(plans);

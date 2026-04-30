@@ -26,6 +26,7 @@ import AdminDetails from "../pages/admin/AdminDetails";
 import AdminForgotPassword from "../pages/admin/AdminForgotPassword";
 import AdminResetPassword from "../pages/admin/AdminResetPassword";
 import SetExpense from "../pages/admin/SetExpense";
+import ExpenseHistory from "../pages/admin/ExpenseHistory";
 
 
 import Students from "../pages/admin/Students";
@@ -113,6 +114,14 @@ export default function AppRoutes() {
           element={
             <AdminProtectedRoute>
               <SetExpense />
+            </AdminProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/expense-history"
+          element={
+            <AdminProtectedRoute>
+              <ExpenseHistory />
             </AdminProtectedRoute>
           }
         />
