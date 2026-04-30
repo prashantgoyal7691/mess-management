@@ -11,9 +11,7 @@ export const sendOTPEmail = async (email, otp) => {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
       },
-      tls: {
-        family: 4, // 🔥 FORCE IPv4 (THIS FIXES YOUR ERROR)
-      },
+      family: 4, // ✅ Force IPv4 to fix Render deployment issue
     });
 
     await transporter.sendMail({
@@ -50,9 +48,7 @@ export const sendApprovalEmail = async (email, message) => {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
       },
-      tls: {
-        family: 4, // 🔥 FORCE IPv4 (THIS FIXES YOUR ERROR)
-      },
+      family: 4, // ✅ Force IPv4 to fix Render deployment issue
     });
 
     await transporter.sendMail({
@@ -77,9 +73,7 @@ export const sendRejectionEmail = async (email, message) => {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
       },
-      tls: {
-        family: 4, // 🔥 FORCE IPv4 (THIS FIXES YOUR ERROR)
-      },
+      family: 4, // ✅ Force IPv4 to fix Render deployment issue
     });
 
     await transporter.sendMail({
@@ -104,9 +98,7 @@ export const sendPendingEmail = async (email, message) => {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
       },
-      tls: {
-        family: 4, // 🔥 FORCE IPv4 (THIS FIXES YOUR ERROR)
-      },
+      family: 4, // ✅ Force IPv4 to fix Render deployment issue
     });
 
     await transporter.sendMail({
@@ -131,9 +123,7 @@ export const sendDeleteEmail = async (email, message) => {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
       },
-      tls: {
-        family: 4, // 🔥 FORCE IPv4 (THIS FIXES YOUR ERROR)
-      },
+      family: 4, // ✅ Force IPv4 to fix Render deployment issue
     });
 
     await transporter.sendMail({
