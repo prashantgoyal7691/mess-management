@@ -165,7 +165,7 @@ export default function RoleSelect() {
             <div className="w-full h-[500px] bg-[#0f172a] rounded-[30px] overflow-hidden pt-4 ">
               
               <img
-                src="../../../public/image.png"
+                src="/image.png"
                 alt="app preview"
                 className="w-full h-full object-cover"
               />
