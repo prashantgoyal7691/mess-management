@@ -11,6 +11,9 @@ export const sendOTPEmail = async (email, otp) => {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
       },
+      tls: {
+        family: 4, // 🔥 FORCE IPv4 (THIS FIXES YOUR ERROR)
+      },
     });
 
     await transporter.sendMail({
@@ -31,13 +34,11 @@ Valid for 5 minutes.
       `,
     });
     console.log("OTP email sent to:", email);
-
   } catch (err) {
     console.log("Email sending error:", err);
     throw err;
   }
 };
-
 
 export const sendApprovalEmail = async (email, message) => {
   try {
@@ -49,8 +50,10 @@ export const sendApprovalEmail = async (email, message) => {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
       },
+      tls: {
+        family: 4, // 🔥 FORCE IPv4 (THIS FIXES YOUR ERROR)
+      },
     });
-
 
     await transporter.sendMail({
       from: `"Mess Management" <${process.env.EMAIL_USER}>`,
@@ -65,7 +68,6 @@ export const sendApprovalEmail = async (email, message) => {
 };
 
 export const sendRejectionEmail = async (email, message) => {
-
   try {
     const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
@@ -74,6 +76,9 @@ export const sendRejectionEmail = async (email, message) => {
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
+      },
+      tls: {
+        family: 4, // 🔥 FORCE IPv4 (THIS FIXES YOUR ERROR)
       },
     });
 
@@ -99,8 +104,11 @@ export const sendPendingEmail = async (email, message) => {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
       },
+      tls: {
+        family: 4, // 🔥 FORCE IPv4 (THIS FIXES YOUR ERROR)
+      },
     });
-    
+
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: email,
@@ -113,7 +121,6 @@ export const sendPendingEmail = async (email, message) => {
   }
 };
 
-
 export const sendDeleteEmail = async (email, message) => {
   try {
     const transporter = nodemailer.createTransport({
@@ -123,6 +130,9 @@ export const sendDeleteEmail = async (email, message) => {
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
+      },
+      tls: {
+        family: 4, // 🔥 FORCE IPv4 (THIS FIXES YOUR ERROR)
       },
     });
 
