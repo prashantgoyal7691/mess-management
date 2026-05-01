@@ -1,36 +1,33 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendOTPEmail = async (email, otp) => {
   try {
-    // ✅ Create transporter INSIDE function
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 587,
-      secure: false,
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-      family: 4, // ✅ Force IPv4 to fix Render deployment issue
-    });
-
-    await transporter.sendMail({
-      from: `"Mess Management" <${process.env.EMAIL_USER}>`,
+    await resend.emails.send({
+      from: "noreply@portlab.in",
       to: email,
       subject: "OTP Verification",
-      text: `
-Hello,
-
-Your OTP is: ${otp}
-
-Valid for 5 minutes.
-`,
       html: `
         <h2>OTP Verification</h2>
         <h1>${otp}</h1>
         <p>Valid for 5 minutes</p>
       `,
     });
+  //   const response = await resend.emails.send({
+  //     from: "noreply@portlab.in",
+  //     to: email,
+  //     subject: "OTP Verification",
+  //     html: `
+  //   <h2>OTP Verification</h2>
+  //   <h1>${otp}</h1>
+  //   <p>Valid for 5 minutes</p>
+  // `,
+  //   });
+  //   console.log("RESEND RESPONSE:", response);
     console.log("OTP email sent to:", email);
   } catch (err) {
     console.log("Email sending error:", err);
@@ -40,22 +37,11 @@ Valid for 5 minutes.
 
 export const sendApprovalEmail = async (email, message) => {
   try {
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 587,
-      secure: false,
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-      family: 4, // ✅ Force IPv4 to fix Render deployment issue
-    });
-
-    await transporter.sendMail({
-      from: `"Mess Management" <${process.env.EMAIL_USER}>`,
+    await resend.emails.send({
+      from: "noreply@portlab.in",
       to: email,
       subject: "Account Approved",
-      text: message,
+      html: message,
     });
     console.log("Approval email sent to:", email);
   } catch (err) {
@@ -65,22 +51,11 @@ export const sendApprovalEmail = async (email, message) => {
 
 export const sendRejectionEmail = async (email, message) => {
   try {
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 587,
-      secure: false,
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-      family: 4, // ✅ Force IPv4 to fix Render deployment issue
-    });
-
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+    await resend.emails.send({
+      from: "noreply@portlab.in",
       to: email,
       subject: "Account Rejected ❌",
-      text: message,
+      html: message,
     });
     console.log("Rejection email sent to:", email);
   } catch (err) {
@@ -90,22 +65,11 @@ export const sendRejectionEmail = async (email, message) => {
 
 export const sendPendingEmail = async (email, message) => {
   try {
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 587,
-      secure: false,
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-      family: 4, // ✅ Force IPv4 to fix Render deployment issue
-    });
-
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+    await resend.emails.send({
+      from: "noreply@portlab.in",
       to: email,
       subject: "Account Pending Approval ⏳",
-      text: message,
+      html: message,
     });
     console.log("Pending email sent to:", email);
   } catch (err) {
@@ -115,22 +79,11 @@ export const sendPendingEmail = async (email, message) => {
 
 export const sendDeleteEmail = async (email, message) => {
   try {
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 587,
-      secure: false,
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-      family: 4, // ✅ Force IPv4 to fix Render deployment issue
-    });
-
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+    await resend.emails.send({
+      from: "noreply@portlab.in",
       to: email,
       subject: "Account Deleted ⚠️",
-      text: message,
+      html: message,
     });
     console.log("Delete email sent to:", email);
   } catch (err) {

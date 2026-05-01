@@ -55,23 +55,9 @@ export const sendAdminOtp = async (req, res) => {
       });
     }
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    console.log(otp);
     otpStore.set(email, otp);
 
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER, // ✅ FIXED
-        pass: process.env.EMAIL_PASS, // ✅ FIXED
-      },
-    });
-
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: "Admin Signup OTP",
-      text: `Your OTP is ${otp}`,
-    });
+    await sendOTPEmail(email, otp);
 
     res.json({ message: "OTP sent" });
   } catch (err) {
