@@ -22,6 +22,7 @@ app.use(
     origin: [
       "http://localhost:5173",
       "https://mess-management-navy.vercel.app",
+      "http://mess-management.s3-website.ap-south-1.amazonaws.com",
     ],
     credentials: true,
   })

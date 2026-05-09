@@ -17,18 +17,6 @@ export const sendOTPEmail = async (email, otp) => {
         <p>Valid for 5 minutes</p>
       `,
     });
-  //   const response = await resend.emails.send({
-  //     from: "noreply@portlab.in",
-  //     to: email,
-  //     subject: "OTP Verification",
-  //     html: `
-  //   <h2>OTP Verification</h2>
-  //   <h1>${otp}</h1>
-  //   <p>Valid for 5 minutes</p>
-  // `,
-  //   });
-  //   console.log("RESEND RESPONSE:", response);
-    console.log("OTP email sent to:", email);
   } catch (err) {
     console.log("Email sending error:", err);
     throw err;
@@ -43,9 +31,9 @@ export const sendApprovalEmail = async (email, message) => {
       subject: "Account Approved",
       html: message,
     });
-    console.log("Approval email sent to:", email);
   } catch (err) {
     console.log("EMAIL ERROR:", err);
+    throw err;
   }
 };
 
@@ -57,9 +45,9 @@ export const sendRejectionEmail = async (email, message) => {
       subject: "Account Rejected ❌",
       html: message,
     });
-    console.log("Rejection email sent to:", email);
   } catch (err) {
     console.log("REJECTION EMAIL ERROR:", err);
+    throw err;
   }
 };
 
@@ -71,9 +59,9 @@ export const sendPendingEmail = async (email, message) => {
       subject: "Account Pending Approval ⏳",
       html: message,
     });
-    console.log("Pending email sent to:", email);
   } catch (err) {
     console.log("PENDING EMAIL ERROR:", err);
+    throw err;
   }
 };
 
@@ -85,8 +73,8 @@ export const sendDeleteEmail = async (email, message) => {
       subject: "Account Deleted ⚠️",
       html: message,
     });
-    console.log("Delete email sent to:", email);
   } catch (err) {
     console.log("DELETE EMAIL ERROR:", err);
+    throw err;
   }
 };
