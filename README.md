@@ -264,36 +264,20 @@ MongoDB Atlas
 ### `server/.env`
 
 ```env
-PORT=5000
-NODE_ENV=development
-
 # MongoDB
 MONGO_URI=mongodb+srv://<user>:<pass>@cluster0.mongodb.net/mess-management
 
 # JWT
 JWT_SECRET=your_secret_key_here
-JWT_EXPIRES_IN=7d
 
-# CORS
-FRONTEND_URL=http://localhost:5173
+RESEND_API_KEY=your_resend_key
 
-# Firebase Admin (from service account JSON)
-FIREBASE_PROJECT_ID=your_project_id
-FIREBASE_CLIENT_EMAIL=your_client_email
-FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
 ```
 
 ### `client/.env`
 
 ```env
 VITE_API_URL=http://localhost:5000/api
-
-VITE_FIREBASE_API_KEY=your_api_key
-VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
-VITE_FIREBASE_PROJECT_ID=your_project_id
-VITE_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
-VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
-VITE_FIREBASE_APP_ID=your_app_id
 ```
 
 <br/>
@@ -331,8 +315,8 @@ VITE_FIREBASE_APP_ID=your_app_id
 ```bash
 POST /api/auth/register
 {
-  "name": "Prashant Goyal",
-  "email": "2021bcs042@nitsri.ac.in",
+  "name": "Prashant",
+  "email": "2021bcs0@nitsri.ac.in",
   "password": "secure123",
   "rollNumber": "2021BCS042",
   "hostelName": "Shamsher Bhawan",
