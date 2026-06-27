@@ -150,7 +150,7 @@ export default function Signup() {
             </label>
             <input
               name="email"
-              placeholder="Enter your email"
+              placeholder="Enter your email (@nitsri.ac.in)"
               className="w-full bg-white/10 border border-white/20 focus:ring-2 focus:ring-green-400 outline-none p-2 rounded text-white placeholder-gray-400 mt-2"
               onChange={handleChange}
             />

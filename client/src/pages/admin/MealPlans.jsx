@@ -2,25 +2,37 @@ import { useEffect, useState } from "react";
 import AdminLayout from "../../layouts/AdminLayout";
 import axios from "axios";
 
-const getISTDate = (date = new Date()) => {
-  return new Date(
-    date.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
-  ).toLocaleDateString("en-CA");
-};
 
 export default function MealPlans() {
   const [menu, setMenu] = useState({});
+  const [serverDate, setServerDate] = useState(null);
+  const [lockDate, setLockDate] = useState(null);
+
+  useEffect(() => {
+    const fetchServerDate = async () => {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/system/date`,
+      );
+
+      const data = await res.json();
+
+      setServerDate(data.today);
+      setLockDate(data.lockDate);
+    };
+
+    fetchServerDate();
+  }, []);
 
   // 🔥 Generate next 7 days (dynamic UI)
   const getDates = () => {
     const arr = [];
 
     for (let i = 0; i < 7; i++) {
-      const d = new Date();
+      const d = new Date(serverDate + "T00:00:00");
       d.setDate(d.getDate() + i);
 
       arr.push({
-        date: getISTDate(d),
+        date: d.toLocaleDateString("en-CA"),
         day: d.toLocaleDateString("en-US", { weekday: "long" }),
         display: d.toLocaleDateString("en-IN", {
           day: "2-digit",
@@ -32,10 +44,11 @@ export default function MealPlans() {
     return arr;
   };
 
-  const [dates] = useState(getDates());
+  const dates = serverDate ? getDates() : [];
 
   // 🔥 Fetch menu (day-based → map to date)
   useEffect(() => {
+    if (!serverDate) return;
     const fetchMenus = async () => {
       try {
         const token = localStorage.getItem("adminToken");
@@ -65,19 +78,12 @@ export default function MealPlans() {
     };
 
     fetchMenus();
-  }, [dates]);
+  }, [serverDate]);
 
   const isEditable = (date) => {
-    const today = new Date(getISTDate());
-    const d = new Date(date + "T00:00:00");
+    if (!lockDate) return false;
 
-    today.setHours(0, 0, 0, 0);
-    d.setHours(0, 0, 0, 0);
-
-    const tomorrow = new Date(getISTDate());
-    tomorrow.setDate(tomorrow.getDate() + 1);
-
-    return d > tomorrow; // ✅ only after tomorrow editable
+    return date > lockDate;
   };
 
   // 🔁 Handle change (date-based state)
@@ -129,7 +135,9 @@ export default function MealPlans() {
   return (
     <AdminLayout>
       <div className="p-4 md:p-6">
-        <h1 className="text-xl md:text-2xl font-bold mb-4">Weekly Menu Planner</h1>
+        <h1 className="text-xl md:text-2xl font-bold mb-4">
+          Weekly Menu Planner
+        </h1>
 
         <div className="bg-white shadow rounded-lg p-4 md:p-6">
           <div className="overflow-x-auto">
@@ -148,7 +156,9 @@ export default function MealPlans() {
                   <tr key={item.date} className="text-center">
                     <td className="border p-3 font-semibold">
                       <div>{item.day}</div>
-                      <div className="text-sm text-gray-500">{item.display}</div>
+                      <div className="text-sm text-gray-500">
+                        {item.display}
+                      </div>
                     </td>
 
                     {["breakfast", "lunch", "dinner"].map((meal) => (

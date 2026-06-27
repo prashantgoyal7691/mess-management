@@ -9,8 +9,17 @@ import {
   getStudentsByAdmin,
   getAdminProfile,
   getTodayReport,
-  getStudentHistory,getMesses,
-  downloadStudentHistoryPDF,setMenu,getMenu,getMenuForStudent,approveStudent,rejectStudent,deleteStudent,adminForgotPassword,adminResetPassword,
+  getStudentHistory,
+  getMesses,
+  downloadStudentHistoryPDF,
+  setMenu,
+  getMenu,
+  getMenuForStudent,
+  approveStudent,
+  rejectStudent,
+  deleteStudent,
+  adminForgotPassword,adminResetPassword,
+  updateManagementFee,
 } from "../controllers/adminController.js";
 
 
@@ -38,5 +47,10 @@ router.get("/menu", adminAuth, getMenu);
 router.get("/menu/student", getMenuForStudent);
 router.get("/meal-count", adminAuth, getMealCount);
 router.get("/profile", adminAuth, getAdminProfile);
+router.put(
+  "/management-fee",
+  adminAuth,
+  updateManagementFee
+);
 
 export default router;

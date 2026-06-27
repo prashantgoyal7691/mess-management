@@ -3,8 +3,30 @@ import { useEffect, useState } from "react";
 
 export default function Attendance() {
   const [attendance, setAttendance] = useState([]);
-  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [selectedMonth, setSelectedMonth] = useState(null);
+  const [selectedYear, setSelectedYear] = useState(null);
+  const [serverToday, setServerToday] = useState(null);
+
+  useEffect(() => {
+    const fetchServerDate = async () => {
+      try {
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/system/date`,
+        );
+
+        const data = await res.json();
+
+        const serverDate = new Date(data.today + "T00:00:00");
+
+        setServerToday(serverDate);
+        setSelectedMonth(serverDate.getMonth());
+        setSelectedYear(serverDate.getFullYear());
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchServerDate();
+  }, []);
 
   const months = [
     "January",
@@ -21,14 +43,25 @@ export default function Attendance() {
     "December",
   ];
 
-  const [bill, setBill] = useState(0);
+  const [bill, setBill] = useState({
+    foodBill: 0,
+    managementFee: 0,
+    totalBill: 0,
+    status: "",
+  });
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     const user =
       storedUser && storedUser !== "undefined" ? JSON.parse(storedUser) : null;
 
-    if (!user?._id) return;
+    if (
+      !user?._id ||
+      !serverToday ||
+      selectedMonth === null ||
+      selectedYear === null
+    )
+      return;
 
     const fetchAttendance = async () => {
       try {
@@ -69,17 +102,15 @@ export default function Attendance() {
         });
 
         const fullMonth = [];
-        const today = new Date(
-          new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }),
-        );
+
         // today.setDate(today.getDate() + 1);
 
         const isCurrentMonth =
-          selectedMonth === today.getMonth() &&
-          selectedYear === today.getFullYear();
+          selectedMonth === serverToday.getMonth() &&
+          selectedYear === serverToday.getFullYear();
 
         for (let day = 1; day <= daysInMonth; day++) {
-          const isFuture = isCurrentMonth && day > today.getDate();
+          const isFuture = isCurrentMonth && day >= serverToday.getDate();
 
           fullMonth.push({
             day,
@@ -101,7 +132,7 @@ export default function Attendance() {
         const token = localStorage.getItem("studentToken");
 
         const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/billing/my-dynamic`,
+          `${import.meta.env.VITE_API_URL}/api/billing/monthly-summary`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -113,42 +144,78 @@ export default function Attendance() {
 
         const monthKey = `${selectedYear}-${String(selectedMonth + 1).padStart(2, "0")}`;
 
-        const today = new Date(
-          new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }),
-        );
-        today.setHours(0, 0, 0, 0);
+        const summary = data.find((m) => m.month === monthKey);
 
-        const filtered = data.filter((b) => {
-          if (!b.date.startsWith(monthKey)) return false;
+        if (!summary) {
+          setBill({
+            foodBill: 0,
+            managementFee: 0,
+            totalBill: 0,
+            status: "No Meals",
+          });
+          return;
+        }
 
-          const billDate = new Date(b.date);
-          billDate.setHours(0, 0, 0, 0);
-
-          return billDate <= today; // ✅ only upto today
-        });
-
-        let total = 0;
-
-        filtered.forEach((b) => {
-          total += b.total;
-        });
-
-        setBill(parseFloat(total.toFixed(2)));
+        setBill(summary);
       } catch (err) {
-        console.log("Error fetching bill", err);
+        console.log(err);
       }
     };
 
     fetchAttendance();
     fetchBill();
-  }, [selectedMonth, selectedYear]);
+  }, [selectedMonth, selectedYear, serverToday]);
+
+  const handleDownloadInvoice = async () => {
+    try {
+      const token = localStorage.getItem("studentToken");
+
+      const monthKey = `${selectedYear}-${String(selectedMonth + 1).padStart(2, "0")}`;
+
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/billing/invoice/${monthKey}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      if (!response.ok) {
+        alert("Invoice not available.");
+        return;
+      }
+
+      const blob = await response.blob();
+
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+
+      link.href = url;
+      link.download = `Invoice-${monthKey}.pdf`;
+
+      document.body.appendChild(link);
+
+      link.click();
+
+      link.remove();
+
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.log(err);
+      alert("Failed to download invoice.");
+    }
+  };
 
   return (
     <StudentLayout>
       {/* Header */}
       <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6 px-4 md:px-0">
         <h1 className="text-xl md:text-3xl font-bold">
-          Monthly Attendance ({months[selectedMonth]} {selectedYear})
+          {selectedMonth !== null && selectedYear !== null
+            ? `Monthly Attendance (${months[selectedMonth]} ${selectedYear})`
+            : "Monthly Attendance"}
         </h1>
 
         <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
@@ -225,7 +292,53 @@ export default function Attendance() {
 
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div className="col-span-2 font-bold text-lg mt-2">
-            Total Bill: ₹{bill}
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span>Food Bill</span>
+
+                <span>₹{bill.foodBill}</span>
+              </div>
+
+              <div className="flex justify-between">
+                <span>Management Fee</span>
+
+                <span>₹{bill.managementFee}</span>
+              </div>
+
+              <hr />
+
+              <div className="flex justify-between font-bold text-lg">
+                <span>Total</span>
+
+                <span>₹{bill.totalBill}</span>
+              </div>
+
+              <div className="mt-4 flex items-center justify-between">
+                <div>
+                  <span className="font-semibold">Status :</span>{" "}
+                  <span
+                    className={`font-semibold ${
+                      bill.status === "Paid"
+                        ? "text-green-600"
+                        : bill.status === "Pending"
+                          ? "text-orange-500"
+                          : "text-blue-600"
+                    }`}
+                  >
+                    {bill.status}
+                  </span>
+                </div>
+
+                {bill.status !== "In Progress" && (
+                  <button
+                    onClick={handleDownloadInvoice}
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition"
+                  >
+                    Download Invoice
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>

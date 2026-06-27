@@ -40,7 +40,7 @@ export default function Login() {
 
         <input
           type="email"
-          placeholder="Enter Email"
+          placeholder="Enter Email (@nitsri.ac.in)"
           className="bg-white/10 border border-white/20 focus:ring-2 focus:ring-green-400 outline-none p-2 w-full mb-3 rounded text-white placeholder-gray-400"
           value={email}
           onChange={(e) => setEmail(e.target.value)}

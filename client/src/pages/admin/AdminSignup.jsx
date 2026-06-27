@@ -122,7 +122,7 @@ export default function AdminSignup() {
 
             <input
               name="email"
-              placeholder="Email"
+              placeholder="Enter Email (@nitsri.ac.in)"
               className="bg-white/10 border border-white/20 focus:ring-2 focus:ring-green-400 outline-none p-2 w-full mb-3 rounded text-white placeholder-gray-400"
               onChange={handleChange}
             />

@@ -1,12 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AdminLayout from "../../layouts/AdminLayout";
 import { useNavigate } from "react-router-dom";
 
-const getISTDate = (date = new Date()) => {
-  return new Date(
-    date.toLocaleString("en-US", { timeZone: "Asia/Kolkata" }),
-  ).toLocaleDateString("en-CA");
-};
+
 
 export default function SetExpense() {
   const [breakfastCost, setBreakfastCost] = useState("");
@@ -14,9 +10,20 @@ export default function SetExpense() {
   const [dinnerCost, setDinnerCost] = useState("");
   const navigate = useNavigate();
 
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  const date = getISTDate(tomorrow);
+  const [date, setDate] = useState("");
+
+  useEffect(() => {
+    const fetchServerDate = async () => {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/system/date`,
+      );
+
+      const data = await res.json();
+
+      setDate(data.lockDate);
+    };
+    fetchServerDate();
+  }, []);
 
   const handleSubmit = async () => {
     try {
@@ -62,8 +69,6 @@ export default function SetExpense() {
           <h1 className="text-xl md:text-3xl font-bold">
             Set Expense for {date}
           </h1>
-
-          
         </div>
 
         <div className="bg-white p-4 md:p-6 rounded-xl shadow space-y-4">

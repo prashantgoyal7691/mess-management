@@ -13,9 +13,6 @@ export default function StudentDashboard() {
       setUser(JSON.parse(storedUser));
     }
   }, []);
-  const today = new Date()
-    .toLocaleString("en-US", { weekday: "long" })
-    .toLowerCase();
   return (
     <StudentLayout>
       <h1 className="text-xl md:text-3xl font-bold mb-6 px-4 md:px-0">Student Dashboard</h1>

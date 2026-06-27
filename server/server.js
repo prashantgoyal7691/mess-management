@@ -9,8 +9,10 @@ import adminRoutes from "./routes/adminRoutes.js";
 import feedbackRoutes from "./routes/feedbackRoutes.js";
 import complaintRoutes from "./routes/complaintRoutes.js";
 import billingRoutes from "./routes/billingRoutes.js";
+import { generateInvoicesForPreviousMonth } from "./utils/invoiceGenerator.js";
 import cron from "node-cron";
 import { lockOldMeals } from "./jobs/lockMeals.js";
+import systemRoutes from "./routes/systemRoutes.js";
 
 
 dotenv.config();
@@ -31,12 +33,14 @@ app.use(
 app.use(express.json());
 
 // routes
+app.use("/api/system", systemRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/feedback", feedbackRoutes);
 app.use("/api/meal", mealPlanRoutes);
 app.use("/api/complaint", complaintRoutes);
 app.use("/api/billing", billingRoutes);
+
 
 
 // 🔐 Protected Test Route
@@ -50,6 +54,12 @@ app.get("/api/protected", authMiddleware, (req, res) => {
 cron.schedule("0 0 * * *", async () => {
   console.log("Running meal lock job...");
   await lockOldMeals();
+});
+
+cron.schedule("5 0 1 * *", async () => {
+    console.log("Running monthly invoice job...");
+    await generateInvoicesForPreviousMonth();
+
 });
 
 // DB connect

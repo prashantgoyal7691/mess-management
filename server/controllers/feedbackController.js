@@ -9,7 +9,7 @@ export const createFeedback = async (req, res) => {
     const user = await User.findById(userId);
 
     const { type, message } = req.body;
-    const today = new Date().toISOString().split("T")[0];
+    const today = new Date().toLocaleDateString("en-CA");
 
     // 🔍 Check if feedback already exists for same meal & date
     const existing = await Feedback.findOne({

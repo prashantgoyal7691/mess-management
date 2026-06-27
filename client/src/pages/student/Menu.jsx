@@ -1,46 +1,64 @@
 import StudentLayout from "../../layouts/StudentLayout";
 import { useState, useEffect } from "react";
 
-const getISTDate = (date = new Date()) => {
-  return new Date(
-    date.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
-  ).toLocaleDateString("en-CA");
-};
 
 export default function Menu() {
   const [menus, setMenus] = useState({});
   const [plans, setPlans] = useState({});
   const [isLoaded, setIsLoaded] = useState(false);
+  const [serverDate, setServerDate] = useState(null);
+  const [lockDate, setLockDate] = useState(null);
 
   const storedUser = localStorage.getItem("user");
   const user =
     storedUser && storedUser !== "undefined" ? JSON.parse(storedUser) : null;
 
-  // 🔥 Generate 7 days
   const getDates = () => {
+    if (!serverDate) return [];
     const arr = [];
-
     for (let i = 0; i < 7; i++) {
-      const d = new Date();
+      const d = new Date(serverDate + "T00:00:00");
       d.setDate(d.getDate() + i);
-
       arr.push({
-        day: d.toLocaleDateString("en-US", { weekday: "long" }),
-        date: getISTDate(d),
+        day: d.toLocaleDateString("en-US", {
+          weekday: "long",
+        }),
+        date: d.toLocaleDateString("en-CA"),
         displayDate: d.toLocaleDateString("en-IN", {
           day: "2-digit",
           month: "short",
         }),
       });
     }
-
     return arr;
   };
 
-  const dates = getDates();
+  useEffect(() => {
+    const fetchServerDate = async () => {
+      try {
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/system/date`,
+        );
+
+        const data = await res.json();
+
+        setServerDate(data.today);
+
+        setLockDate(data.lockDate);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchServerDate();
+  }, []);
+
+  const dates = serverDate ? getDates() : [];
 
   // 🔥 Load menu from admin
   useEffect(() => {
+    if (!serverDate) return;
+
     const fetchMenus = async () => {
       try {
         const token = localStorage.getItem("userToken");
@@ -74,10 +92,11 @@ export default function Menu() {
     };
 
     fetchMenus();
-  }, []);
+  }, [serverDate]);
 
   // 🔥 Load student selections
   useEffect(() => {
+    if (!serverDate) return;
     const fetchPlans = async () => {
       if (!user?._id) return;
 
@@ -101,20 +120,13 @@ export default function Menu() {
     };
 
     fetchPlans();
-  }, []);
+  }, [serverDate]);
 
   // 🔒 lock logic
   const isLocked = (date) => {
-    const today = new Date(getISTDate());
-    const mealDate = new Date(date + "T00:00:00");
+    if (!lockDate) return true;
 
-    today.setHours(0, 0, 0, 0);
-    mealDate.setHours(0, 0, 0, 0);
-
-    const tomorrow = new Date(today);
-    tomorrow.setDate(today.getDate() + 1);
-
-    return mealDate <= tomorrow;
+    return date <= lockDate;
   };
 
   // 🔁 toggle
@@ -149,7 +161,9 @@ export default function Menu() {
 
   return (
     <StudentLayout>
-      <h1 className="text-xl md:text-3xl font-bold mb-6 px-4 md:px-0">Weekly Menu</h1>
+      <h1 className="text-xl md:text-3xl font-bold mb-6 px-4 md:px-0">
+        Weekly Menu
+      </h1>
 
       <div className="bg-white p-4 md:p-6 rounded-2xl shadow overflow-x-auto mx-4 md:mx-0">
         <table className="w-full border-collapse">

@@ -1,19 +1,31 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import StudentLayout from "../../layouts/StudentLayout";
 import { useNavigate } from "react-router-dom";
-
-const getISTDate = (date = new Date()) => {
-  return new Date(
-    date.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
-  ).toLocaleDateString("en-CA");
-};
 
 export default function Complaints() {
   const [title, setTitle] = useState("");
   const [type, setType] = useState("Food Quality");
   const [description, setDescription] = useState("");
-  const [date, setDate] = useState(getISTDate());
+  const [date, setDate] = useState("");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchServerDate = async () => {
+      try {
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/system/date`,
+        );
+
+        const data = await res.json();
+
+        setDate(data.today);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchServerDate();
+  }, []);
 
   const handleSubmit = async () => {
     if (!title.trim() || !description.trim()) {
@@ -24,19 +36,22 @@ export default function Complaints() {
     try {
       const token = localStorage.getItem("studentToken");
 
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/complaint/create`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/complaint/create`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            category: type,
+            title,
+            description,
+            date,
+          }),
         },
-        body: JSON.stringify({
-          category: type,
-          title,
-          description,
-          date,
-        }),
-      });
+      );
 
       const data = await res.json();
 
@@ -51,7 +66,11 @@ export default function Complaints() {
       setType("Food Quality");
       setTitle("");
       setDescription("");
-      setDate(getISTDate());
+      const resDate = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/system/date`,
+      );
+      const dateData = await resDate.json();
+      setDate(dateData.today);
     } catch (err) {
       console.log(err);
       alert("Error submitting complaint");

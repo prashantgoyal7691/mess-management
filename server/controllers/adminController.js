@@ -180,18 +180,18 @@ export const getMealCount = async (req, res) => {
     const students = await User.find({ messId });
     const studentIds = students.map((s) => s._id);
 
-    const today = new Date(
-      new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }),
-    ).toLocaleDateString("en-CA");
-
-    const tomorrowObj = new Date(
-      new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }),
+    const indiaNow = new Date(
+      new Date().toLocaleString("en-US", {
+        timeZone: "Asia/Kolkata",
+      }),
     );
+
+    const today = indiaNow.toLocaleDateString("en-CA");
+
+    const tomorrowObj = new Date(indiaNow);
     tomorrowObj.setDate(tomorrowObj.getDate() + 1);
 
-    const tomorrow = new Date(
-  tomorrowObj.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
-).toLocaleDateString("en-CA");
+    const tomorrow = tomorrowObj.toLocaleDateString("en-CA");
 
     const todayMeals = await MealPlan.find({
       userId: { $in: studentIds },
@@ -234,7 +234,7 @@ export const getAdminProfile = async (req, res) => {
     }
 
     const admin = await Admin.findById(adminId).select(
-      "fullName email messName messCode phoneNumber messAddress",
+      "fullName email messName messCode phoneNumber messAddress managementFee",
     );
 
     res.json(admin);
@@ -363,7 +363,7 @@ export const getTodayReport = async (req, res) => {
     const adminId = req.user.id;
 
     const today = new Date(
-      new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+      new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }),
     ).toLocaleDateString("en-CA");
 
     // 🔹 Get expense (may or may not exist)
@@ -401,14 +401,10 @@ export const getTodayReport = async (req, res) => {
         : 0;
 
     const lunchRate =
-      expense && lunchCount > 0
-        ? expense.lunchCost / lunchCount
-        : 0;
+      expense && lunchCount > 0 ? expense.lunchCost / lunchCount : 0;
 
     const dinnerRate =
-      expense && dinnerCount > 0
-        ? expense.dinnerCost / dinnerCount
-        : 0;
+      expense && dinnerCount > 0 ? expense.dinnerCost / dinnerCount : 0;
 
     // 🔹 Get all students (IMPORTANT CHANGE)
     const students = await User.find({ messId: adminId });
@@ -464,8 +460,8 @@ export const getStudentHistory = async (req, res) => {
     const { month } = req.query;
 
     const today = new Date(
-  new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
-).toLocaleDateString("en-CA");
+      new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }),
+    ).toLocaleDateString("en-CA");
 
     let filter = { userId: studentId };
 
@@ -581,8 +577,8 @@ export const downloadStudentHistoryPDF = async (req, res) => {
 
     const meals = await MealPlan.find(filter);
     const today = new Date(
-  new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
-).toLocaleDateString("en-CA");
+      new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }),
+    ).toLocaleDateString("en-CA");
 
     const lockedMeals = meals.filter((m) => m.date <= today);
 
@@ -823,5 +819,33 @@ export const adminResetPassword = async (req, res) => {
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "Error resetting password" });
+  }
+};
+
+export const updateManagementFee = async (req, res) => {
+  try {
+    const adminId = req.user.id;
+
+    const { managementFee } = req.body;
+
+    const admin = await Admin.findByIdAndUpdate(
+      adminId,
+      {
+        managementFee: Number(managementFee),
+      },
+      {
+        new: true,
+      },
+    );
+
+    res.json({
+      message: "Management fee updated",
+      managementFee: admin.managementFee,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Error updating management fee",
+    });
   }
 };

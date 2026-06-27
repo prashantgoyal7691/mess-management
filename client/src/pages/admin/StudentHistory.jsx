@@ -2,21 +2,33 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import AdminLayout from "../../layouts/AdminLayout";
 
-const getISTDate = (date = new Date()) => {
-  return new Date(
-    date.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
-  ).toLocaleDateString("en-CA");
-};
 
 export default function StudentHistory() {
   const { id } = useParams();
   const [meals, setMeals] = useState([]);
   const [student, setStudent] = useState(null);
-  const [month, setMonth] = useState(() => {
-    return getISTDate().slice(0, 7);
-  });
+  const [month, setMonth] = useState("");
 
   useEffect(() => {
+    const fetchServerDate = async () => {
+      try {
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/system/date`,
+        );
+
+        const data = await res.json();
+
+        setMonth(data.today.slice(0, 7));
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchServerDate();
+  }, []);
+
+  useEffect(() => {
+    if (!month) return;
     const fetchHistory = async () => {
       const url = month
         ? `${import.meta.env.VITE_API_URL}/api/admin/student-history/${id}?month=${month}`
@@ -46,7 +58,9 @@ export default function StudentHistory() {
   return (
     <AdminLayout>
       <div className="p-4 md:p-6">
-        <h1 className="text-xl md:text-2xl font-bold mb-4">Student Meal History</h1>
+        <h1 className="text-xl md:text-2xl font-bold mb-4">
+          Student Meal History
+        </h1>
         {student && (
           <div className="bg-white p-4 md:p-5 rounded-xl shadow mb-4">
             <h2 className="text-xl font-bold">{student.name}</h2>
