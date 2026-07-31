@@ -6,8 +6,7 @@ import {
   updateComplaint,
 } from "../controllers/complaintController.js";
 
-import { authMiddleware } from "../middleware/authMiddleware.js";
-import { adminAuth } from "../middleware/authMiddleware.js";
+import { authMiddleware ,adminAuth } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 

@@ -51,7 +51,7 @@ app.get("/api/protected", authMiddleware, (req, res) => {
   });
 });
 
-cron.schedule("0 0 * * *", async () => {
+cron.schedule("* * * * *", async () => {
   console.log("Running meal lock job...");
   await lockOldMeals();
 });
