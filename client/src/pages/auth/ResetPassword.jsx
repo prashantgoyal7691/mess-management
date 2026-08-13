@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { studentResetPassword } from "../../services/authService";
 
 export default function ResetPassword() {
   const navigate = useNavigate();
@@ -23,32 +24,18 @@ export default function ResetPassword() {
     }
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/reset-password`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          otp,
-          password,
-        }),
+      await studentResetPassword({
+        email,
+        otp,
+        password,
       });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        alert(data.message);
-        return;
-      }
 
       alert("Password reset successful");
 
       navigate("/login");
-
     } catch (err) {
       console.log(err);
-      alert("Something went wrong");
+      alert(err.message);
     }
   };
 

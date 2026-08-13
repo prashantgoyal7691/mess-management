@@ -5,7 +5,7 @@ import { lockOldMeals } from "../jobs/lockMeals.js";
 import MonthlyInvoice from "../models/MonthlyInvoice.js";
 import { getMealCounts, getMealRates } from "../utils/billingHelper.js";
 import { calculateMonthSummary } from "../utils/monthlySummaryHelper.js";
-import { generateInvoicesForPreviousMonth } from "../utils/invoiceGenerator.js";
+import { generateInvoicesForPreviousMonth } from "../jobs/invoiceGenerator.js";
 import Admin from "../models/Admin.js";
 import PDFDocument from "pdfkit";
 
@@ -160,45 +160,57 @@ export const getMyInvoices = async (req, res) => {
 
 export const getMonthlySummary = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select("_id messId").lean();
+    const { month } = req.query;
 
-    const months = await MealPlan.distinct("date", {
-      userId: user._id,
-      status: "eat",
-    });
-
-    const uniqueMonths = [...new Set(months.map((d) => d.substring(0, 7)))]
-      .sort()
-      .reverse();
-
-    const result = [];
-
-    for (const month of uniqueMonths) {
-      const invoice = await MonthlyInvoice.findOne({
-        userId: user._id,
-        month,
+    if (!month || !/^\d{4}-\d{2}$/.test(month)) {
+      return res.status(400).json({
+        message: "Invalid month. Use YYYY-MM",
       });
-
-      if (invoice) {
-        result.push({
-          month: invoice.month,
-          breakfastTaken: invoice.breakfastCount,
-          lunchTaken: invoice.lunchCount,
-          dinnerTaken: invoice.dinnerCount,
-          foodBill: invoice.foodBill,
-          managementFee: invoice.managementFee,
-          totalBill: invoice.totalBill,
-          status: invoice.paymentStatus === "paid" ? "Paid" : "Pending",
-          paid: invoice.paymentStatus === "paid",
-        });
-      } else {
-        result.push(await calculateMonthSummary(user._id, user.messId, month));
-      }
     }
 
-    res.json(result);
+    const user = await User.findById(req.user.id)
+      .select("_id messId")
+      .lean();
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    const invoice = await MonthlyInvoice.findOne({
+      userId: user._id,
+      month,
+    }).lean();
+
+    if (invoice) {
+      return res.json({
+        month: invoice.month,
+        breakfastTaken: invoice.breakfastCount,
+        lunchTaken: invoice.lunchCount,
+        dinnerTaken: invoice.dinnerCount,
+        foodBill: invoice.foodBill,
+        managementFee: invoice.managementFee,
+        totalBill: invoice.totalBill,
+        status:
+          invoice.paymentStatus === "paid"
+            ? "Paid"
+            : "Pending",
+        paid:
+          invoice.paymentStatus === "paid",
+      });
+    }
+
+    const summary = await calculateMonthSummary(
+      user._id,
+      user.messId,
+      month,
+    );
+
+    res.json(summary);
   } catch (err) {
     console.error(err);
+
     res.status(500).json({
       message: "Error fetching monthly summary",
     });

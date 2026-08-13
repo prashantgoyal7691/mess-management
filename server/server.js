@@ -9,7 +9,7 @@ import adminRoutes from "./routes/adminRoutes.js";
 import feedbackRoutes from "./routes/feedbackRoutes.js";
 import complaintRoutes from "./routes/complaintRoutes.js";
 import billingRoutes from "./routes/billingRoutes.js";
-import { generateInvoicesForPreviousMonth } from "./utils/invoiceGenerator.js";
+import { generateInvoicesForPreviousMonth } from "./jobs/invoiceGenerator.js";
 import cron from "node-cron";
 import { lockOldMeals } from "./jobs/lockMeals.js";
 import systemRoutes from "./routes/systemRoutes.js";
@@ -51,15 +51,22 @@ app.get("/api/protected", authMiddleware, (req, res) => {
   });
 });
 
-cron.schedule("* * * * *", async () => {
+cron.schedule("*/5 * * * *", async () => {
   console.log("Running meal lock job...");
-  await lockOldMeals();
+  try {
+    await lockOldMeals();
+  } catch (err) {
+    console.error("Meal lock job failed:", err);
+  }
 });
 
-cron.schedule("5 0 1 * *", async () => {
-    console.log("Running monthly invoice job...");
+cron.schedule("0 * * * *", async () => {
+  console.log("Running invoice reconciliation job...");
+  try {
     await generateInvoicesForPreviousMonth();
-
+  } catch (err) {
+    console.error("Invoice reconciliation job failed:", err);
+  }
 });
 
 // DB connect

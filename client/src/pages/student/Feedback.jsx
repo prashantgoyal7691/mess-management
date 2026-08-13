@@ -1,6 +1,7 @@
 import { useState } from "react";
 import StudentLayout from "../../layouts/StudentLayout";
 import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../../stores/authStore";
 
 export default function Feedback() {
   const [meal, setMeal] = useState("");
@@ -8,7 +9,7 @@ export default function Feedback() {
   const [hover, setHover] = useState(0);
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
-
+  const token = useAuthStore((state) => state.studentToken);
   const handleSubmit = async () => {
     if (!meal || rating === 0 || !message.trim()) {
       alert("Please fill all fields");
@@ -16,8 +17,7 @@ export default function Feedback() {
     }
 
     try {
-      const token = localStorage.getItem("studentToken");
-
+      
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/feedback/create`, {
         method: "POST",
         headers: {

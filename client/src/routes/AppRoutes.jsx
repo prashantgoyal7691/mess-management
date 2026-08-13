@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
+import StudentProtectedRoute from "./StudentProtectedRoute";
 import StudentDashboard from "../pages/student/StudentDashboard";
 import Menu from "../pages/student/Menu";
 import Feedback from "../pages/student/Feedback";
@@ -18,7 +19,7 @@ import StudentDetails from "../pages/student/StudentDetails";
 import ForgotPassword from "../pages/auth/ForgotPassword";
 import ResetPassword from "../pages/auth/ResetPassword";
 
-import AdminProtectedRoute from "../utils/AdminProtectedRoute";
+import AdminProtectedRoute from "./AdminProtectedRoute";
 import AdminLogin from "../pages/admin/AdminLogin";
 import AdminDashboard from "../pages/admin/AdminDashboard";
 import AdminSignup from "../pages/admin/AdminSignup";
@@ -38,9 +39,6 @@ import StudentHistory from "../pages/admin/StudentHistory";
 import StudentDetailsAdmin from "../pages/admin/StudentDetailsAdmin";
 
 export default function AppRoutes() {
-  const token = localStorage.getItem("studentToken");
-  const isAuthenticated = !!token;
-
   return (
     <BrowserRouter>
       <Routes>
@@ -55,42 +53,74 @@ export default function AppRoutes() {
 
         <Route
           path="/student/dashboard"
-          element={isAuthenticated ? <StudentDashboard /> : <Navigate to="/" />}
+          element={
+            <StudentProtectedRoute>
+              <StudentDashboard />
+            </StudentProtectedRoute>
+          }
         />
 
         <Route
           path="/student/details"
-          element={isAuthenticated ? <StudentDetails /> : <Navigate to="/" />}
+          element={
+            <StudentProtectedRoute>
+              <StudentDetails />
+            </StudentProtectedRoute>
+          }
         />
 
         <Route
           path="/student/my-feedbacks"
-          element={isAuthenticated ? <MyFeedbacks /> : <Navigate to="/" />}
+          element={
+            <StudentProtectedRoute>
+              <MyFeedbacks />
+            </StudentProtectedRoute>
+          }
         />
 
         <Route
           path="/student/my-complaints"
-          element={isAuthenticated ? <MyComplaints /> : <Navigate to="/" />}
+          element={
+            <StudentProtectedRoute>
+              <MyComplaints />
+            </StudentProtectedRoute>
+          }
         />
 
         <Route
           path="/student/menu"
-          element={isAuthenticated ? <Menu /> : <Navigate to="/" />}
+          element={
+            <StudentProtectedRoute>
+              <Menu />
+            </StudentProtectedRoute>
+          }
         />
 
         <Route
           path="/student/feedback"
-          element={isAuthenticated ? <Feedback /> : <Navigate to="/" />}
+          element={
+            <StudentProtectedRoute>
+              <Feedback />
+            </StudentProtectedRoute>
+          }   
         />
 
         <Route
           path="/student/complaints"
-          element={isAuthenticated ? <Complaints /> : <Navigate to="/" />}
+          element={
+            <StudentProtectedRoute>
+              <Complaints />
+            </StudentProtectedRoute>
+          }
         />
 
         <Route
           path="/student/attendance"
-          element={isAuthenticated ? <Attendance /> : <Navigate to="/" />}
+          element={
+            <StudentProtectedRoute>
+              <Attendance />
+            </StudentProtectedRoute>
+          }
         />
 
         {/* ✅ ADMIN ROUTES */}

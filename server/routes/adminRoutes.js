@@ -4,7 +4,7 @@ import {
   sendAdminOtp,
   verifyAdminOtpAndSignup,
 } from "../controllers/adminController.js";
-import { adminAuth } from "../middleware/authMiddleware.js";
+import { adminAuth ,authMiddleware} from "../middleware/authMiddleware.js";
 import {
   getStudentsByAdmin,
   getAdminProfile,
@@ -20,6 +20,7 @@ import {
   deleteStudent,
   adminForgotPassword,adminResetPassword,
   updateManagementFee,
+  getWeeklyMenuForStudent,
 } from "../controllers/adminController.js";
 
 
@@ -44,7 +45,8 @@ router.get(
 router.get("/messes", getMesses);
 router.post("/menu", adminAuth, setMenu);
 router.get("/menu", adminAuth, getMenu);
-router.get("/menu/student", getMenuForStudent);
+router.get("/menu/student", authMiddleware, getMenuForStudent);
+router.get("/menu/student/week", authMiddleware,getWeeklyMenuForStudent);
 router.get("/meal-count", adminAuth, getMealCount);
 router.get("/profile", adminAuth, getAdminProfile);
 router.put(

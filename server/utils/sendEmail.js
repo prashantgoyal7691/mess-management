@@ -18,7 +18,7 @@ export const sendOTPEmail = async (email, otp) => {
     //   `,
     // });
     const response = await resend.emails.send({
-      from: "noreply@p19.in",
+      from: "messManagement@p19.in",
       to: email,
       subject: "OTP Verification",
       html: `
@@ -41,7 +41,7 @@ export const sendOTPEmail = async (email, otp) => {
 export const sendApprovalEmail = async (email, message) => {
   try {
     await resend.emails.send({
-      from: "noreply@p19.in",
+      from: "messManagement@p19.in",
       to: email,
       subject: "Account Approved",
       html: message,
@@ -55,7 +55,7 @@ export const sendApprovalEmail = async (email, message) => {
 export const sendRejectionEmail = async (email, message) => {
   try {
     await resend.emails.send({
-      from: "noreply@p19.in",
+      from: "messManagement@p19.in",
       to: email,
       subject: "Account Rejected ❌",
       html: message,
@@ -69,7 +69,7 @@ export const sendRejectionEmail = async (email, message) => {
 export const sendPendingEmail = async (email, message) => {
   try {
     await resend.emails.send({
-      from: "noreply@p19.in",
+      from: "messManagement@p19.in",
       to: email,
       subject: "Account Pending Approval ⏳",
       html: message,
@@ -83,7 +83,7 @@ export const sendPendingEmail = async (email, message) => {
 export const sendDeleteEmail = async (email, message) => {
   try {
     await resend.emails.send({
-      from: "noreply@p19.in",
+      from: "messManagement@p19.in",
       to: email,
       subject: "Account Deleted ⚠️",
       html: message,

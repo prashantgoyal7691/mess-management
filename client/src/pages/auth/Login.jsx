@@ -1,34 +1,26 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { studentLogin } from "../../services/authService";
+import { useAuthStore } from "../../stores/authStore";
 
 export default function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const loginStudent = useAuthStore((state) => state.loginStudent);
 
   const handleEmailLogin = async () => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
+      const data = await studentLogin({
+        email,
+        password,
       });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        alert(data.message);
-        return;
-      }
-
-      localStorage.setItem("studentToken", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
+      loginStudent(data);
 
       window.location.href = "/student/dashboard";
     } catch (err) {
       console.log(err);
+      alert(err.message);
     }
   };
 

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { studentForgotPassword } from "../../services/authService";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -17,29 +18,19 @@ export default function ForgotPassword() {
     setLoading(true);
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/forgot-password`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        alert(data.message);
-        setLoading(false);
-        return;
-      }
+      await studentForgotPassword({ email });
 
       alert("OTP sent to your email");
 
-      navigate("/reset-password", { state: { email } });
-
+      navigate("/reset-password", {
+        state: {
+          email,
+        },
+      });
     } catch (err) {
       console.log(err);
-      alert("Something went wrong");
+      alert(err.message);
+    } finally {
       setLoading(false);
     }
   };

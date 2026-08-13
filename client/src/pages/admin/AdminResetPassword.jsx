@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { adminResetPassword } from "../../services/authService";
 
 export default function AdminResetPassword() {
   const location = useLocation();
@@ -11,31 +12,20 @@ export default function AdminResetPassword() {
 
   const handleReset = async () => {
     try {
-    if (!email) {
+      if (!email) {
         alert("Session expired. Please try again.");
         navigate("/admin/forgot-password");
         return;
       }
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/admin/reset-password`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email, otp, newPassword }),
-        },
-      );
+      await adminResetPassword({
+        email,
+        otp,
+        newPassword,
 
-      const data = await res.json();
-      
-
-      if (!res.ok) {
-        alert(data.message);
-        return;
-      }
+      });
 
       alert("Password updated successfully");
+
       navigate("/admin/login");
     } catch (err) {
       console.log(err);

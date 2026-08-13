@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { adminLogin } from "../../services/authService";
+import { useAuthStore } from "../../stores/authStore";
 
 export default function AdminLogin() {
   const navigate = useNavigate();
+  const loginAdmin = useAuthStore((state) => state.loginAdmin);
 
   const [form, setForm] = useState({
     email: "",
@@ -18,29 +21,12 @@ export default function AdminLogin() {
 
   const handleLogin = async () => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(form),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        alert(data.message || "Login failed");
-        return;
-      }
-
-      // ✅ FIXED HERE
-      localStorage.setItem("admin", JSON.stringify(data.admin));
-      localStorage.setItem("adminToken", data.token);
-
+      const data = await adminLogin(form);
+      loginAdmin(data);
       navigate("/admin/dashboard");
     } catch (err) {
       console.log(err);
-      alert("Something went wrong");
+      alert(err.message);
     }
   };
 

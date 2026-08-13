@@ -1,32 +1,28 @@
 import StudentLayout from "../../layouts/StudentLayout";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
+import { useAuthStore } from "../../stores/authStore";
+import { useSystemStore } from "../../stores/systemStore";
+import { useAttendanceStore } from "../../stores/attendanceStore";
+import { downloadInvoice } from "../../services/billingService";
 
 export default function Attendance() {
-  const [attendance, setAttendance] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState(null);
   const [selectedYear, setSelectedYear] = useState(null);
-  const [serverToday, setServerToday] = useState(null);
+  const user = useAuthStore((state) => state.user);
+  const token = useAuthStore((state) => state.studentToken);
+  const serverDate = useSystemStore((state) => state.today);
+  const serverToday = useMemo(() => {
+    return serverDate
+      ? new Date(serverDate + "T00:00:00")
+      : null;
+  }, [serverDate]);
 
   useEffect(() => {
-    const fetchServerDate = async () => {
-      try {
-        const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/system/date`,
-        );
+    if (!serverToday) return;
 
-        const data = await res.json();
-
-        const serverDate = new Date(data.today + "T00:00:00");
-
-        setServerToday(serverDate);
-        setSelectedMonth(serverDate.getMonth());
-        setSelectedYear(serverDate.getFullYear());
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    fetchServerDate();
-  }, []);
+    setSelectedMonth(serverToday.getMonth());
+    setSelectedYear(serverToday.getFullYear());
+  }, [serverToday]);
 
   const months = [
     "January",
@@ -42,155 +38,87 @@ export default function Attendance() {
     "November",
     "December",
   ];
+  const attendance = useAttendanceStore(
+    (state) => state.attendance,
+  );
 
-  const [bill, setBill] = useState({
-    foodBill: 0,
-    managementFee: 0,
-    totalBill: 0,
-    status: "",
-  });
+  const bill = useAttendanceStore(
+    (state) => state.bill,
+  );
+
+  const attendanceLoading = useAttendanceStore(
+    (state) => state.attendanceLoading,
+  );
+
+  const billingLoading = useAttendanceStore(
+    (state) => state.billingLoading,
+  );
+
+  const attendanceError = useAttendanceStore(
+    (state) => state.attendanceError,
+  );
+
+  const billingError = useAttendanceStore(
+    (state) => state.billingError,
+  );
+
+  const fetchMonth = useAttendanceStore(
+    (state) => state.fetchMonth,
+  );
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    const user =
-      storedUser && storedUser !== "undefined" ? JSON.parse(storedUser) : null;
-
     if (
       !user?._id ||
+      !token ||
       !serverToday ||
       selectedMonth === null ||
       selectedYear === null
-    )
+    ) {
       return;
+    }
 
-    const fetchAttendance = async () => {
-      try {
-        const monthString = `${selectedYear}-${String(selectedMonth + 1).padStart(2, "0")}`;
+    const monthString = `${selectedYear}-${String(
+      selectedMonth + 1,
+    ).padStart(2, "0")}`;
 
-        const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/meal/monthly?userId=${user._id}&month=${monthString}`,
-        );
-
-        const data = await res.json();
-
-        if (!Array.isArray(data)) {
-          setBill(0);
-          return;
-        }
-
-        const daysMap = {};
-
-        const daysInMonth = new Date(
-          selectedYear,
-          selectedMonth + 1,
-          0,
-        ).getDate();
-
-        data.forEach((item) => {
-          const day = parseInt(item.date.split("-")[2]);
-
-          if (!daysMap[day]) {
-            daysMap[day] = {
-              day,
-              breakfast: false,
-              lunch: false,
-              dinner: false,
-            };
-          }
-
-          daysMap[day][item.meal] = item.status === "eat";
-        });
-
-        const fullMonth = [];
-
-        // today.setDate(today.getDate() + 1);
-
-        const isCurrentMonth =
-          selectedMonth === serverToday.getMonth() &&
-          selectedYear === serverToday.getFullYear();
-
-        for (let day = 1; day <= daysInMonth; day++) {
-          const isFuture = isCurrentMonth && day >= serverToday.getDate();
-
-          fullMonth.push({
-            day,
-            isFuture, // 👈 store it here
-            breakfast: !isFuture && (daysMap[day]?.breakfast || false),
-            lunch: !isFuture && (daysMap[day]?.lunch || false),
-            dinner: !isFuture && (daysMap[day]?.dinner || false),
-          });
-        }
-
-        setAttendance(fullMonth);
-      } catch (err) {
-        console.log("Error fetching attendance", err);
-      }
-    };
-
-    const fetchBill = async () => {
-      try {
-        const token = localStorage.getItem("studentToken");
-
-        const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/billing/monthly-summary`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
-
-        const data = await res.json();
-
-        const monthKey = `${selectedYear}-${String(selectedMonth + 1).padStart(2, "0")}`;
-
-        const summary = data.find((m) => m.month === monthKey);
-
-        if (!summary) {
-          setBill({
-            foodBill: 0,
-            managementFee: 0,
-            totalBill: 0,
-            status: "No Meals",
-          });
-          return;
-        }
-
-        setBill(summary);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-
-    fetchAttendance();
-    fetchBill();
-  }, [selectedMonth, selectedYear, serverToday]);
+    fetchMonth({
+      userId: user._id,
+      token,
+      month: monthString,
+      selectedYear,
+      selectedMonth,
+      serverToday,
+    });
+  }, [
+    selectedMonth,
+    selectedYear,
+    serverToday,
+    user?._id,
+    token,
+    fetchMonth,
+  ]);
 
   const handleDownloadInvoice = async () => {
     try {
-      const token = localStorage.getItem("studentToken");
-
-      const monthKey = `${selectedYear}-${String(selectedMonth + 1).padStart(2, "0")}`;
-
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/billing/invoice/${monthKey}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-
-      if (!response.ok) {
-        alert("Invoice not available.");
+      if (!token) {
+        alert("Please login again.");
         return;
       }
 
-      const blob = await response.blob();
+      const monthKey = `${selectedYear}-${String(
+        selectedMonth + 1,
+      ).padStart(2, "0")}`;
 
-      const url = window.URL.createObjectURL(blob);
+      const blob = await downloadInvoice({
+        month: monthKey,
+        token,
+      });
 
-      const link = document.createElement("a");
+      const url =
+        window.URL.createObjectURL(blob);
+
+      const link =
+        document.createElement("a");
 
       link.href = url;
       link.download = `Invoice-${monthKey}.pdf`;
@@ -220,7 +148,7 @@ export default function Attendance() {
 
         <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
           <select
-            value={selectedMonth}
+            value={selectedMonth ?? ""}
             onChange={(e) => setSelectedMonth(Number(e.target.value))}
             className="border p-2 rounded w-full"
           >
@@ -233,7 +161,7 @@ export default function Attendance() {
 
           <input
             type="number"
-            value={selectedYear}
+            value={selectedYear ?? ""}
             onChange={(e) => setSelectedYear(Number(e.target.value))}
             className="border p-2 rounded w-full sm:w-24"
           />
@@ -276,9 +204,8 @@ export default function Attendance() {
 
               {/* Day */}
               <span
-                className={`mt-2 text-sm ${
-                  item.isFuture ? "text-gray-300" : ""
-                }`}
+                className={`mt-2 text-sm ${item.isFuture ? "text-gray-300" : ""
+                  }`}
               >
                 {item.day}
               </span>
@@ -317,13 +244,12 @@ export default function Attendance() {
                 <div>
                   <span className="font-semibold">Status :</span>{" "}
                   <span
-                    className={`font-semibold ${
-                      bill.status === "Paid"
-                        ? "text-green-600"
-                        : bill.status === "Pending"
-                          ? "text-orange-500"
-                          : "text-blue-600"
-                    }`}
+                    className={`font-semibold ${bill.status === "Paid"
+                      ? "text-green-600"
+                      : bill.status === "Pending"
+                        ? "text-orange-500"
+                        : "text-blue-600"
+                      }`}
                   >
                     {bill.status}
                   </span>

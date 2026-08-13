@@ -41,8 +41,6 @@ export const getMealRates = async (messId, date) => {
     date,
   });
 
-  console.log("Expense:", expense);
-
   if (!expense) return null;
 
   const {

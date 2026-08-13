@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import AdminLayout from "../../layouts/AdminLayout";
+import { useAuthStore } from "../../stores/authStore";
 
 export default function AdminDashboard() {
   const [data, setData] = useState({
@@ -18,13 +19,13 @@ export default function AdminDashboard() {
   const todayDate = new Date();
   const tomorrowDate = new Date();
   tomorrowDate.setDate(todayDate.getDate() + 1);
-
+  const token = useAuthStore((state) => state.adminToken);
   useEffect(() => {
     const fetchMealCount = async () => {
       try {
         const res = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/meal-count`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+            Authorization: `Bearer ${token}`,
           },
         });
 
@@ -40,7 +41,7 @@ export default function AdminDashboard() {
     fetchMealCount();
     const interval = setInterval(fetchMealCount, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [token]);
 
   return (
     <AdminLayout>

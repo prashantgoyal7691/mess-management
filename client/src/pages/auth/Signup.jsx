@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { studentSignup } from "../../services/authService";
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -55,28 +56,19 @@ export default function Signup() {
     setLoading(true);
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/signup`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(form),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        alert(data.message);
-        setLoading(false);
-        return;
-      }
+      const data = await studentSignup(form);
 
       alert(data.message);
 
-      navigate("/verify-otp", { state: { email } });
-
+      navigate("/verify-otp", {
+        state: {
+          email,
+        },
+      });
     } catch (err) {
       console.log(err);
+      alert(err.message);
+    } finally {
       setLoading(false);
     }
   };

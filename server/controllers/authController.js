@@ -24,7 +24,8 @@ export const signup = async (req, res) => {
       messCode,
     } = req.body;
 
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@nitsri\.ac\.in$/;
+    // const emailRegex = /^[a-zA-Z0-9._%+-]+@nitsri\.ac\.in$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
 
     if (!emailRegex.test(email)) {
       return res.status(400).json({ message: "Invalid email format" });
@@ -94,7 +95,8 @@ export const verifyOTP = async (req, res) => {
   try {
     const { email, otp } = req.body;
 
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@nitsri\.ac\.in$/;
+    // const emailRegex = /^[a-zA-Z0-9._%+-]+@nitsri\.ac\.in$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
 
     if (!emailRegex.test(email)) {
       return res.status(400).json({ message: "Invalid email format" });
@@ -123,7 +125,7 @@ export const verifyOTP = async (req, res) => {
       return res.status(400).json({ message: "Invalid Mess Code" });
     }
 
-    const newUser = await User.create({
+    await User.create({
       fullName: tempUser.fullName,
       email: tempUser.email,
       hostelName: tempUser.hostelName,
@@ -135,6 +137,11 @@ export const verifyOTP = async (req, res) => {
       isApproved: false,
       messId: admin._id,
     });
+
+    const newUser = await User.findOne({ email }).populate(
+      "messId",
+      "messCode messName"
+    );
 
     try {
       sendPendingEmail(
@@ -176,7 +183,10 @@ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).populate(
+      "messId",
+      "messCode messName"
+    );
 
     if (!user) {
       return res.status(400).json({ message: "User not found" });

@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
+import { verifyStudentOtp } from "../../services/authService";
+import { useAuthStore } from "../../stores/authStore";
 
 export default function VerifyOtp() {
   const location = useLocation();
+  const loginStudent = useAuthStore((state) => state.loginStudent);
   const email = location.state?.email || localStorage.getItem("otpEmail");
 
   const [otp, setOtp] = useState("");
@@ -14,23 +17,19 @@ export default function VerifyOtp() {
     }
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/verify-otp`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, otp }),
+      const data = await verifyStudentOtp({
+        email,
+        otp,
       });
+      
+      loginStudent(data);
 
-      const data = await res.json();
-
-      alert(data.message || "OTP verified successfully");
-      localStorage.setItem("studentToken", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
+      alert(data.message);
 
       window.location.href = "/student/dashboard";
     } catch (err) {
       console.log(err);
+      alert(err.message);
     }
   };
 

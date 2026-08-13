@@ -1,10 +1,14 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { adminSendOtp, adminVerifyOtp } from "../../services/authService";
+import { useAuthStore } from "../../stores/authStore";
 
 export default function AdminSignup() {
   const navigate = useNavigate();
+  const loginAdmin = useAuthStore((state) => state.loginAdmin);
 
   const [step, setStep] = useState(1);
+
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     fullName: "",
@@ -25,54 +29,32 @@ export default function AdminSignup() {
     setLoading(true);
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/send-otp`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: form.email,
-          messName: form.messName,
-        }),
+      await adminSendOtp({
+        email: form.email,
+        messName: form.messName,
       });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        alert(data.message);
-        setLoading(false);
-        return;
-      }
 
       alert("OTP sent");
       setStep(2);
-
     } catch (err) {
       console.log(err);
+      alert(err.message);
+    } finally {
       setLoading(false);
     }
   };
 
   const verifyOtp = async () => {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/verify-otp`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(form),
-    });
+    try {
+      const data = await adminVerifyOtp(form);
 
-    const data = await res.json();
-
-    if (!res.ok) {
-      alert(data.message);
-      return;
+      alert("Signup successful");
+      loginAdmin(data);
+      navigate("/admin/dashboard");
+    } catch (err) {
+      console.log(err);
+      alert(err.message);
     }
-
-    alert("Signup successful");
-    localStorage.setItem("admin", JSON.stringify(data.admin));
-    localStorage.setItem("adminToken", data.token);
-    navigate("/admin/dashboard");
   };
 
   return (

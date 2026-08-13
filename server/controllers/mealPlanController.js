@@ -4,8 +4,8 @@ import User from "../models/User.js";
 // ✅ Correct lock logic (same as frontend)
 const isLocked = (date) => {
   const today = new Date(
-  new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
-);
+    new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+  );
   const mealDate = new Date(date + "T00:00:00");
 
   today.setHours(0, 0, 0, 0);
@@ -21,6 +21,18 @@ const isLocked = (date) => {
 export const setMealPlan = async (req, res) => {
   try {
     const { userId, date, meal, status } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({
+        message: "User ID is required",
+      });
+    }
+
+    if (userId !== req.user.id) {
+      return res.status(403).json({
+        message: "Unauthorized access",
+      });
+    }
 
     const user = await User.findById(userId);
     if (!user) {
@@ -47,7 +59,7 @@ export const setMealPlan = async (req, res) => {
         {
           status: finalStatus,
           messId: user?.messId,
-          locked: isLocked(date), 
+          locked: isLocked(date),
         },
         { upsert: true, returnDocument: "after" }
       );
@@ -65,6 +77,18 @@ export const getMyMealPlan = async (req, res) => {
   try {
     const { userId } = req.query;
 
+    if (!userId) {
+      return res.status(400).json({
+        message: "User ID is required",
+      });
+    }
+
+    if (userId !== req.user.id) {
+      return res.status(403).json({
+        message: "Unauthorized access",
+      });
+    }
+
     const plans = await MealPlan.find({ userId });
 
     res.json(plans);
@@ -78,6 +102,22 @@ export const getMonthlyAttendance = async (req, res) => {
   try {
     const { userId, month } = req.query;
 
+    if (!userId) {
+      return res.status(400).json({
+        message: "User ID is required",
+      });
+    }
+
+    if (userId !== req.user.id) {
+      return res.status(403).json({
+        message: "Unauthorized access",
+      });
+    }
+    if (!month || !/^\d{4}-\d{2}$/.test(month)) {
+      return res.status(400).json({
+        message: "Invalid month. Use YYYY-MM",
+      });
+    }
     const plans = await MealPlan.find({
       userId,
       date: { $regex: `^${month}` },

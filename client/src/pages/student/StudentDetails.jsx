@@ -1,27 +1,28 @@
 import StudentLayout from "../../layouts/StudentLayout";
-import { useEffect, useState } from "react";
+import { useAuthStore } from "../../stores/authStore";
 
 export default function StudentDetails() {
-  const [user, setUser] = useState(null);
+  // const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/profile`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("studentToken")}`,
-          },
-        });
+  // useEffect(() => {
+  //   const fetchUser = async () => {
+  //     try {
+  //       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/profile`, {
+  //         headers: {
+  //           Authorization: `Bearer ${localStorage.getItem("studentToken")}`,
+  //         },
+  //       });
 
-        const data = await res.json();
-        setUser(data); // 🔥 THIS WAS MISSING
-      } catch (err) {
-        console.log(err);
-      }
-    };
+  //       const data = await res.json();
+  //       setUser(data); // 🔥 THIS WAS MISSING
+  //     } catch (err) {
+  //       console.log(err);
+  //     }
+  //   };
 
-    fetchUser();
-  }, []);
+  //   fetchUser();
+  // }, []);
+  const user = useAuthStore((state) => state.user);
   
   if (!user) {
     return (
@@ -73,7 +74,7 @@ export default function StudentDetails() {
             </div>
 
             <div>
-              <p className="text-gray-500 text-sm">messId</p>
+              <p className="text-gray-500 text-sm">Student Id</p>
               <p className="text-base md:text-lg font-semibold">{user?._id || "-"}</p>
             </div>
 

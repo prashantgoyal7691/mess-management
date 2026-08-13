@@ -1,27 +1,36 @@
-import { useEffect, useState } from "react";
+// import { useEffect, useState } from "react";
 import AdminLayout from "../../layouts/AdminLayout";
+import { useAuthStore } from "../../stores/authStore";
 
 export default function AdminDetails() {
-  const [admin, setAdmin] = useState(null);
+//   const [admin, setAdmin] = useState(null);
 
-  useEffect(() => {
-  const fetchAdmin = async () => {
-    try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/profile`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-        },
-      });
+//   useEffect(() => {
+//   const fetchAdmin = async () => {
+//     try {
+//       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/profile`, {
+//         headers: {
+//           Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+//         },
+//       });
 
-      const data = await res.json();
-      setAdmin(data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
+//       const data = await res.json();
+//       setAdmin(data);
+//     } catch (err) {
+//       console.log(err);
+//     }
+//   };
 
-  fetchAdmin();
-}, []);
+//   fetchAdmin();
+// }, []);
+const admin = useAuthStore((state) => state.admin);
+if (!admin) {
+  return (
+    <AdminLayout>
+      <div className="p-6 text-center">Loading...</div>
+    </AdminLayout>
+  );
+}
 
   return (
     <AdminLayout>

@@ -1,31 +1,17 @@
 import { useState, useEffect } from "react";
 import StudentLayout from "../../layouts/StudentLayout";
 import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../../stores/authStore";
+import { useSystemStore } from "../../stores/systemStore";
 
 export default function Complaints() {
   const [title, setTitle] = useState("");
   const [type, setType] = useState("Food Quality");
   const [description, setDescription] = useState("");
-  const [date, setDate] = useState("");
   const navigate = useNavigate();
+  const token = useAuthStore((state) => state.studentToken);
+  const date = useSystemStore((state) => state.today);
 
-  useEffect(() => {
-    const fetchServerDate = async () => {
-      try {
-        const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/system/date`,
-        );
-
-        const data = await res.json();
-
-        setDate(data.today);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-
-    fetchServerDate();
-  }, []);
 
   const handleSubmit = async () => {
     if (!title.trim() || !description.trim()) {
@@ -34,8 +20,6 @@ export default function Complaints() {
     }
 
     try {
-      const token = localStorage.getItem("studentToken");
-
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/api/complaint/create`,
         {
@@ -66,11 +50,6 @@ export default function Complaints() {
       setType("Food Quality");
       setTitle("");
       setDescription("");
-      const resDate = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/system/date`,
-      );
-      const dateData = await resDate.json();
-      setDate(dateData.today);
     } catch (err) {
       console.log(err);
       alert("Error submitting complaint");

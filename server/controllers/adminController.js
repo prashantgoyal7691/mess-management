@@ -35,7 +35,8 @@ export const sendAdminOtp = async (req, res) => {
   try {
     const { email, messName } = req.body;
     // ✅ EMAIL VALIDATION
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@nitsri\.ac\.in$/;
+    // const emailRegex = /^[a-zA-Z0-9._%+-]+@nitsri\.ac\.in$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
 
     if (!emailRegex.test(email)) {
       return res.status(400).json({ message: "Invalid email format" });
@@ -81,7 +82,8 @@ export const verifyAdminOtpAndSignup = async (req, res) => {
       otp,
     } = req.body;
 
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@nitsri\.ac\.in$/;
+    // const emailRegex = /^[a-zA-Z0-9._%+-]+@nitsri\.ac\.in$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
 
     if (!emailRegex.test(email)) {
       return res.status(400).json({ message: "Invalid email format" });
@@ -126,6 +128,9 @@ export const verifyAdminOtpAndSignup = async (req, res) => {
         email: admin.email,
         messName: admin.messName,
         messCode: admin.messCode,
+        phoneNumber: admin.phoneNumber,
+        messAddress: admin.messAddress,
+        managementFee: admin.managementFee,
       },
     });
   } catch (err) {
@@ -163,6 +168,9 @@ export const adminLogin = async (req, res) => {
         email: admin.email,
         messName: admin.messName,
         messCode: admin.messCode,
+        phoneNumber: admin.phoneNumber,
+        messAddress: admin.messAddress,
+        managementFee: admin.managementFee,
       },
     });
   } catch (err) {
@@ -847,5 +855,34 @@ export const updateManagementFee = async (req, res) => {
     res.status(500).json({
       message: "Error updating management fee",
     });
+  }
+};
+
+export const getWeeklyMenuForStudent = async (req, res) => {
+  try {
+    const { messId } = req.query;
+
+    if (!messId) {
+      return res.status(400).json({ message: "messId required" });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(messId)) {
+      return res.status(400).json({ message: "Invalid messId" });
+    }
+
+    const menus = await Menu.find({
+      messId: new mongoose.Types.ObjectId(messId),
+    }).lean();
+
+    const weeklyMenu = {};
+
+    menus.forEach((menu) => {
+      weeklyMenu[menu.day] = menu;
+    });
+
+    res.json(weeklyMenu);
+  } catch (err) {
+    console.log("GET WEEKLY MENU STUDENT ERROR:", err);
+    res.status(500).json({ message: "Error fetching weekly menu" });
   }
 };
