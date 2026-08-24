@@ -24,8 +24,8 @@ export const signup = async (req, res) => {
       messCode,
     } = req.body;
 
-    // const emailRegex = /^[a-zA-Z0-9._%+-]+@nitsri\.ac\.in$/;
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@nitsri\.ac\.in$/;
+    // const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
 
     if (!emailRegex.test(email)) {
       return res.status(400).json({ message: "Invalid email format" });
@@ -95,8 +95,8 @@ export const verifyOTP = async (req, res) => {
   try {
     const { email, otp } = req.body;
 
-    // const emailRegex = /^[a-zA-Z0-9._%+-]+@nitsri\.ac\.in$/;
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@nitsri\.ac\.in$/;
+    // const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
 
     if (!emailRegex.test(email)) {
       return res.status(400).json({ message: "Invalid email format" });

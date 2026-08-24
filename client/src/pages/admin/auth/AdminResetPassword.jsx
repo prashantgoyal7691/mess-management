@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { adminResetPassword } from "../../services/authService";
+import { adminResetPassword } from "../../../services/authService";
 
 export default function AdminResetPassword() {
   const location = useLocation();
@@ -21,7 +21,6 @@ export default function AdminResetPassword() {
         email,
         otp,
         newPassword,
-
       });
 
       alert("Password updated successfully");

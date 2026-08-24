@@ -35,8 +35,8 @@ export const sendAdminOtp = async (req, res) => {
   try {
     const { email, messName } = req.body;
     // ✅ EMAIL VALIDATION
-    // const emailRegex = /^[a-zA-Z0-9._%+-]+@nitsri\.ac\.in$/;
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@nitsri\.ac\.in$/;
+    // const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
 
     if (!emailRegex.test(email)) {
       return res.status(400).json({ message: "Invalid email format" });
@@ -82,8 +82,8 @@ export const verifyAdminOtpAndSignup = async (req, res) => {
       otp,
     } = req.body;
 
-    // const emailRegex = /^[a-zA-Z0-9._%+-]+@nitsri\.ac\.in$/;
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@nitsri\.ac\.in$/;
+    // const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
 
     if (!emailRegex.test(email)) {
       return res.status(400).json({ message: "Invalid email format" });

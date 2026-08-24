@@ -1,6 +1,15 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
+import Home from "../pages/Home";
+
+import Login from "../pages/student/auth/Login";
+import Signup from "../pages/student/auth/Signup";
+import VerifyOtp from "../pages/student/auth/VerifyOtp";
+import ForgotPassword from "../pages/student/auth/ForgotPassword";
+import ResetPassword from "../pages/student/auth/ResetPassword";
+
 import StudentProtectedRoute from "./StudentProtectedRoute";
+
 import StudentDashboard from "../pages/student/StudentDashboard";
 import Menu from "../pages/student/Menu";
 import Feedback from "../pages/student/Feedback";
@@ -8,28 +17,19 @@ import Complaints from "../pages/student/Complaints";
 import Attendance from "../pages/student/Attendance";
 import MyFeedbacks from "../pages/student/MyFeedbacks";
 import MyComplaints from "../pages/student/MyComplaints";
-
-import Login from "../pages/auth/Login";
-import Signup from "../pages/auth/Signup";
-import VerifyOtp from "../pages/auth/VerifyOtp";
-import RoleSelect from "../pages/auth/RoleSelect";
-import StudentAuth from "../pages/auth/StudentAuth";
 import StudentDetails from "../pages/student/StudentDetails";
 
-import ForgotPassword from "../pages/auth/ForgotPassword";
-import ResetPassword from "../pages/auth/ResetPassword";
+import AdminLogin from "../pages/admin/auth/AdminLogin";
+import AdminSignup from "../pages/admin/auth/AdminSignup";
+import AdminForgotPassword from "../pages/admin/auth/AdminForgotPassword";
+import AdminResetPassword from "../pages/admin/auth/AdminResetPassword";
 
 import AdminProtectedRoute from "./AdminProtectedRoute";
-import AdminLogin from "../pages/admin/AdminLogin";
-import AdminDashboard from "../pages/admin/AdminDashboard";
-import AdminSignup from "../pages/admin/AdminSignup";
-import AdminDetails from "../pages/admin/AdminDetails";
-import AdminForgotPassword from "../pages/admin/AdminForgotPassword";
-import AdminResetPassword from "../pages/admin/AdminResetPassword";
+
 import SetExpense from "../pages/admin/SetExpense";
 import ExpenseHistory from "../pages/admin/ExpenseHistory";
-
-
+import AdminDashboard from "../pages/admin/AdminDashboard";
+import AdminDetails from "../pages/admin/AdminDetails";
 import Students from "../pages/admin/Students";
 import MealPlans from "../pages/admin/MealPlans";
 import Reports from "../pages/admin/Reports";
@@ -42,9 +42,8 @@ export default function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<RoleSelect />} />
+        <Route path="/" element={<Home />} />
 
-        <Route path="/student-auth" element={<StudentAuth />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         <Route path="/verify-otp" element={<VerifyOtp />} />

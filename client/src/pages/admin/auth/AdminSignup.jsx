@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { adminSendOtp, adminVerifyOtp } from "../../services/authService";
-import { useAuthStore } from "../../stores/authStore";
+import { adminSendOtp, adminVerifyOtp } from "../../../services/authService";
+import { useAuthStore } from "../../../stores/authStore";
 
 export default function AdminSignup() {
   const navigate = useNavigate();

@@ -32,6 +32,7 @@ app.use(
 
 app.use(express.json());
 
+
 // routes
 app.use("/api/system", systemRoutes);
 app.use("/api/auth", authRoutes);
@@ -42,6 +43,9 @@ app.use("/api/complaint", complaintRoutes);
 app.use("/api/billing", billingRoutes);
 
 
+app.get("/health", (req, res) => {
+  res.send("Server is healthy");
+});
 
 // 🔐 Protected Test Route
 app.get("/api/protected", authMiddleware, (req, res) => {

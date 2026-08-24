@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
-import { verifyStudentOtp } from "../../services/authService";
-import { useAuthStore } from "../../stores/authStore";
+import { verifyStudentOtp } from "../../../services/authService";
+import { useAuthStore } from "../../../stores/authStore";
 
 export default function VerifyOtp() {
   const location = useLocation();

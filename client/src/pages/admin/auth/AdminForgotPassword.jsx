@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { adminForgotPassword } from "../../services/authService";
+import { adminForgotPassword } from "../../../services/authService";
 
 export default function AdminForgotPassword() {
   const [email, setEmail] = useState("");

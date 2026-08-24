@@ -1,20 +1,14 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react"; // ✅ add this
 import {
-  FiArrowRight,
   FiStar,
   FiCalendar,
-  FiSmartphone,
-  FiCheckCircle,
   FiUsers,
   FiTrendingUp,
-  FiClock,
-  FiMessageSquare,
   FiShield,
-  FiChevronDown,
 } from "react-icons/fi";
 
-export default function RoleSelect() {
+export default function Home() {
   const [messes, setMesses] = useState([]);
   const navigate = useNavigate();
   const allMesses = [

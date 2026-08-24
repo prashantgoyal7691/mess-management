@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { studentResetPassword } from "../../services/authService";
+import { studentResetPassword } from "../../../services/authService";
 
 export default function ResetPassword() {
   const navigate = useNavigate();

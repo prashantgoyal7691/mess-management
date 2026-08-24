@@ -1,36 +1,15 @@
-// import { useEffect, useState } from "react";
 import AdminLayout from "../../layouts/AdminLayout";
 import { useAuthStore } from "../../stores/authStore";
 
 export default function AdminDetails() {
-//   const [admin, setAdmin] = useState(null);
-
-//   useEffect(() => {
-//   const fetchAdmin = async () => {
-//     try {
-//       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/profile`, {
-//         headers: {
-//           Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-//         },
-//       });
-
-//       const data = await res.json();
-//       setAdmin(data);
-//     } catch (err) {
-//       console.log(err);
-//     }
-//   };
-
-//   fetchAdmin();
-// }, []);
-const admin = useAuthStore((state) => state.admin);
-if (!admin) {
-  return (
-    <AdminLayout>
-      <div className="p-6 text-center">Loading...</div>
-    </AdminLayout>
-  );
-}
+  const admin = useAuthStore((state) => state.admin);
+  if (!admin) {
+    return (
+      <AdminLayout>
+        <div className="p-6 text-center">Loading...</div>
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout>
@@ -41,7 +20,7 @@ if (!admin) {
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-            
+
             <div>
               <p className="text-gray-500 text-sm">Full Name</p>
               <p className="text-base md:text-lg font-semibold">
