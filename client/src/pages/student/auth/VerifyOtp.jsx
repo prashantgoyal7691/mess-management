@@ -1,11 +1,9 @@
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { verifyStudentOtp } from "../../../services/authService";
-import { useAuthStore } from "../../../stores/authStore";
 
 export default function VerifyOtp() {
   const location = useLocation();
-  const loginStudent = useAuthStore((state) => state.loginStudent);
   const email = location.state?.email || localStorage.getItem("otpEmail");
 
   const [otp, setOtp] = useState("");
@@ -21,12 +19,10 @@ export default function VerifyOtp() {
         email,
         otp,
       });
-      
-      loginStudent(data);
 
       alert(data.message);
 
-      window.location.href = "/student/dashboard";
+      window.location.href = "/login";
     } catch (err) {
       console.log(err);
       alert(err.message);

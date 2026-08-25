@@ -12,7 +12,10 @@ async function request(url, options) {
   const data = await res.json();
 
   if (!res.ok) {
-    throw new Error(data.message || "Something went wrong");
+    const error = new Error(data.message || "Something went wrong");
+    error.status = res.status;
+    error.data = data;
+    throw error;
   }
 
   return data;
@@ -47,6 +50,12 @@ export const studentForgotPassword = (payload) =>
 
 export const studentResetPassword = (payload) =>
   request("/api/auth/reset-password", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+
+export const withdrawPendingRequest = (payload) =>
+  request("/api/auth/withdraw-pending", {
     method: "POST",
     body: JSON.stringify(payload),
   });

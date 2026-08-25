@@ -1,26 +1,23 @@
 import express from "express";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 import {
-  forgotPassword,
-  resetPassword,
-} from "../controllers/authController.js";
-
-import {
   signup,
   verifyOTP,
-  login
+  login,
+  forgotPassword,
+  resetPassword,
+  getStudentProfile,
+  withdrawPendingRequest,
 } from "../controllers/authController.js";
-
-import { getStudentProfile } from "../controllers/authController.js";
 
 const router = express.Router();
 
-// router.get("/feedback", authMiddleware, getFeedback);
 router.post("/signup", signup);
 router.post("/verify-otp", verifyOTP);
 router.post("/login", login);
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password", resetPassword);
 router.get("/profile", authMiddleware, getStudentProfile);
+router.post("/withdraw-pending", withdrawPendingRequest);
 
 export default router;

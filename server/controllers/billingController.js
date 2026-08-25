@@ -27,21 +27,7 @@ export const setDailyExpense = async (req, res) => {
     tomorrowObj.setDate(tomorrowObj.getDate() + 1);
     const date = tomorrowObj.toLocaleDateString("en-CA");
 
-    // const expenseDate =
-    //   date ||
-    //   new Date(
-    //     new Date().toLocaleString("en-US", {
-    //       timeZone: "Asia/Kolkata",
-    //     }),
-    //   );
-
-    // const finalDate =
-    //   typeof expenseDate === "string"
-    //     ? expenseDate
-    //     : expenseDate.toLocaleDateString("en-CA");
-
     const expense = await DailyExpense.findOneAndUpdate(
-      // { messId: adminId, date },
       { messId: adminId, date },
       { breakfastCost, lunchCost, dinnerCost },
       { new: true, upsert: true },
@@ -97,27 +83,6 @@ export const runLockNow = async (req, res) => {
     res.json({
       message: "Meals locked successfully (manual trigger)",
     });
-
-    // const dates = await MealPlan.distinct("date");
-
-    // dates.sort();
-
-    // for (const date of dates) {
-    //   const messes = await MealPlan.distinct("messId", {
-    //     date,
-
-    //     locked: true,
-    //   });
-
-    //   for (const messId of messes) {
-    //     await generateDailyBills(date, messId);
-    //   }
-    //   console.log(`Completed ${date}`);
-    // }
-
-    // res.json({
-    //   message: "Historical daily bills generated successfully",
-    // });
   } catch (err) {
     console.log(err);
     res.status(500).json({
@@ -376,11 +341,7 @@ export const downloadInvoice = async (req, res) => {
     });
 
     doc.moveDown(2);
-
-    // ===========================
-    // Summary
-    // ===========================
-
+    
     doc.y = y + 20;
 
     doc.moveTo(50, doc.y).lineTo(550, doc.y).stroke();

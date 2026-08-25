@@ -24,15 +24,27 @@ export const signup = async (req, res) => {
       messCode,
     } = req.body;
 
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@nitsri\.ac\.in$/;
-    // const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+    // const emailRegex = /^[a-zA-Z0-9._%+-]+@nitsri\.ac\.in$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
 
     if (!emailRegex.test(email)) {
       return res.status(400).json({ message: "Invalid email format" });
     }
+
     let user = await User.findOne({ email });
+
     if (user) {
-      return res.status(400).json({ message: "User already exists" });
+      if (user.isApproved) {
+        return res.status(400).json({
+          message: "User already exists",
+        });
+      }
+
+      return res.status(409).json({
+        message:
+          "A pending registration request already exists for this email. Withdraw the pending request before registering with another mess.",
+        pendingRequest: true,
+      });
     }
 
     if (tempUsers[email]) {
@@ -95,8 +107,8 @@ export const verifyOTP = async (req, res) => {
   try {
     const { email, otp } = req.body;
 
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@nitsri\.ac\.in$/;
-    // const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+    // const emailRegex = /^[a-zA-Z0-9._%+-]+@nitsri\.ac\.in$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
 
     if (!emailRegex.test(email)) {
       return res.status(400).json({ message: "Invalid email format" });
@@ -153,9 +165,6 @@ export const verifyOTP = async (req, res) => {
     }
 
     delete tempUsers[email];
-    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
-    });
 
     const userData = {
       _id: newUser._id,
@@ -170,11 +179,68 @@ export const verifyOTP = async (req, res) => {
 
     res.json({
       message: "OTP verified successfully",
-      token,
       user: userData,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+};
+
+//withdraw request
+export const withdrawPendingRequest = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({
+        message: "Invalid email format",
+      });
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    if (user.isApproved) {
+      return res.status(400).json({
+        message: "This account is already approved and cannot be withdrawn",
+      });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(400).json({
+        message: "Invalid password",
+      });
+    }
+
+    const deletedUser = await User.findOneAndDelete({
+      _id: user._id,
+      isApproved: false,
+    });
+
+    if (!deletedUser) {
+      return res.status(400).json({
+        message: "This request has already been approved and cannot be withdrawn",
+      });
+    }
+
+    res.json({
+      message: "Pending request withdrawn successfully",
+    });
+  } catch (err) {
+    console.log("WITHDRAW ERROR:", err);
+
+    res.status(500).json({
+      message: "Error withdrawing pending request",
+    });
   }
 };
 
@@ -303,7 +369,7 @@ export const getStudentProfile = async (req, res) => {
     const user = await User.findById(userId)
       .populate("messId", "messCode messName")
       .select(
-        "fullName email hostelName enrolmentNumber roomNumber phone messId",
+        "fullName email hostelName enrolmentNumber roomNumber phone messId isApproved",
       );
 
     res.json(user);

@@ -35,8 +35,8 @@ export const sendAdminOtp = async (req, res) => {
   try {
     const { email, messName } = req.body;
     // ✅ EMAIL VALIDATION
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@nitsri\.ac\.in$/;
-    // const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+    // const emailRegex = /^[a-zA-Z0-9._%+-]+@nitsri\.ac\.in$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
 
     if (!emailRegex.test(email)) {
       return res.status(400).json({ message: "Invalid email format" });
@@ -82,8 +82,8 @@ export const verifyAdminOtpAndSignup = async (req, res) => {
       otp,
     } = req.body;
 
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@nitsri\.ac\.in$/;
-    // const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+    // const emailRegex = /^[a-zA-Z0-9._%+-]+@nitsri\.ac\.in$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
 
     if (!emailRegex.test(email)) {
       return res.status(400).json({ message: "Invalid email format" });
@@ -310,10 +310,21 @@ export const rejectStudent = async (req, res) => {
   try {
     const { studentId } = req.params;
 
-    const student = await User.findByIdAndDelete(studentId);
+    const student = await User.findById(studentId);
+
     if (!student) {
-      return res.status(404).json({ message: "Student not found" });
+      return res.status(404).json({
+        message: "Student not found",
+      });
     }
+
+    if (student.messId.toString() !== req.user.id) {
+      return res.status(403).json({
+        message: "Not allowed",
+      });
+    }
+
+    await User.findByIdAndDelete(studentId);
 
     sendRejectionEmail(
       student.email,

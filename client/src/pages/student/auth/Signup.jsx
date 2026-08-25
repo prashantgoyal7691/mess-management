@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { studentSignup } from "../../../services/authService";
+import { studentSignup, withdrawPendingRequest } from "../../../services/authService";
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -8,6 +8,8 @@ export default function Signup() {
   const prefilledMessCode = location.state?.messCode || "";
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [pendingRequest, setPendingRequest] = useState(false);
+  const [withdrawPassword, setWithdrawPassword] = useState("");
   const [form, setForm] = useState({
     fullName: "",
     email: "",
@@ -67,6 +69,35 @@ export default function Signup() {
       });
     } catch (err) {
       console.log(err);
+      if (err.status === 409 && err.data?.pendingRequest) {
+        setPendingRequest(true);
+        return;
+      }
+      alert(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleWithdraw = async () => {
+      if (!withdrawPassword) {
+        alert("Enter your existing account password");
+        return;
+      }
+      try {
+     
+      setLoading(true);
+
+      const data = await withdrawPendingRequest({
+        email: form.email,
+        password: withdrawPassword,
+      });
+
+      alert(data.message);
+      setPendingRequest(false);
+      setWithdrawPassword("");
+    } catch (err) {
+      console.log(err);
       alert(err.message);
     } finally {
       setLoading(false);
@@ -97,6 +128,35 @@ export default function Signup() {
       <div className="bg-white/5 backdrop-blur-lg border border-white/10 shadow-2xl p-8 rounded-2xl w-full max-w-md">
         <h2 className="text-2xl font-bold mb-2 text-center text-white">Create Account</h2>
         <p className="text-gray-400 text-center mb-4">Sign up to get started</p>
+        {pendingRequest && (
+          <div className="mb-6 rounded-lg border border-yellow-400/30 bg-yellow-400/10 p-4">
+            <h3 className="text-yellow-300 font-semibold text-center mb-2">
+              Pending Registration Found
+            </h3>
+
+            <p className="text-gray-300 text-sm text-center mb-4">
+              A pending registration request already exists for this email.
+              Withdraw the existing request if you want to register with another
+              mess.
+            </p>
+            <input
+              type="password"
+              placeholder="Enter your existing account password"
+              value={withdrawPassword}
+              onChange={(e) => setWithdrawPassword(e.target.value)}
+              className="w-full bg-white/10 border border-white/20 focus:ring-2 focus:ring-yellow-400 outline-none p-2 rounded text-white placeholder-gray-400 mb-3"
+            />
+
+            <button
+              onClick={handleWithdraw}
+              disabled={loading}
+              className={`w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 rounded transition ${loading ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+            >
+              {loading ? "Withdrawing..." : "Withdraw Pending Request"}
+            </button>
+          </div>
+        )}
         <div className="flex justify-center items-center gap-4 mb-6 mt-4">
           <div
             className={`w-8 h-8 flex items-center justify-center rounded-full ${step >= 1 ? "bg-purple-500 text-white" : "bg-gray-300"}`}
