@@ -37,3 +37,20 @@ export const createComplaint = (token, complaintData) =>
     },
     body: JSON.stringify(complaintData),
   });
+
+  export const getAdminComplaints = (token) =>
+  request("/api/complaint/admin", {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+export const updateComplaint = (token, id, complaintData) =>
+  request(`/api/complaint/${id}`, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(complaintData),
+  });

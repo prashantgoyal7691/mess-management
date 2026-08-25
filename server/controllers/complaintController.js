@@ -61,7 +61,10 @@ export const updateComplaint = async (req, res) => {
     const { id } = req.params;
     const { status, reply } = req.body || {};
 
-    const complaint = await Complaint.findById(id);
+    const complaint = await Complaint.findOne({
+      _id: id,
+      messId: req.user.id,
+    });
 
     if (!complaint) {
       return res.status(404).json({ message: "Complaint not found" });
@@ -78,7 +81,13 @@ export const updateComplaint = async (req, res) => {
 
     await complaint.save();
 
-    res.json({ message: "Complaint updated", complaint });
+    const updatedComplaint = await Complaint.findById(id)
+      .populate("userId", "fullName enrolmentNumber");
+
+    res.json({
+      message: "Complaint updated",
+      complaint: updatedComplaint,
+    });
   } catch (err) {
     console.log("UPDATE COMPLAINT ERROR:", err);
     res.status(500).json({ message: "Error updating complaint" });

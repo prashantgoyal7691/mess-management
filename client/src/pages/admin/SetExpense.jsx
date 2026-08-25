@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import AdminLayout from "../../layouts/AdminLayout";
 import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../../stores/authStore";
+import { useBillingStore } from "../../stores/billingStore";
+import { useReportStore } from "../../stores/reportStore";
 
 
 
@@ -11,46 +14,45 @@ export default function SetExpense() {
   const navigate = useNavigate();
 
   const [date, setDate] = useState("");
+  const token = useAuthStore((state) => state.adminToken);
+  const setExpense = useBillingStore(
+    (state) => state.setExpense
+  );
+
+  const settingExpense = useBillingStore(
+    (state) => state.settingExpense
+  );
+
+  const reportServerDate = useReportStore(
+    (state) => state.reportServerDate
+  );
+
+  const fetchReportServerDate = useReportStore(
+    (state) => state.fetchReportServerDate
+  );
 
   useEffect(() => {
-    const fetchServerDate = async () => {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/system/date`,
-      );
+    fetchReportServerDate();
+  }, [fetchReportServerDate]);
 
-      const data = await res.json();
+  useEffect(() => {
+    if (!reportServerDate) return;
 
-      setDate(data.lockDate);
-    };
-    fetchServerDate();
-  }, []);
+    setDate(reportServerDate);
+  }, [reportServerDate]);
 
   const handleSubmit = async () => {
     try {
-      const token = localStorage.getItem("adminToken");
-
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/billing/set-expense`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            breakfastCost,
-            lunchCost,
-            dinnerCost,
-          }),
-        },
+      await setExpense(
+        token,
+        breakfastCost,
+        lunchCost,
+        dinnerCost,
       );
-
-      const data = await res.json();
 
       alert("Expense saved for tomorrow");
     } catch (err) {
-      console.log(err);
-      alert("Error saving expense");
+      alert(err.message || "Error saving expense");
     }
   };
 
@@ -98,9 +100,10 @@ export default function SetExpense() {
 
           <button
             onClick={handleSubmit}
+            disabled={settingExpense}
             className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
           >
-            Save Expense
+            {settingExpense ? "Saving..." : "Save Expense"}
           </button>
         </div>
       </div>

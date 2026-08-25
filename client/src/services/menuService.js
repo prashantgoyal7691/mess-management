@@ -85,3 +85,60 @@ export const saveMealPlan = async ({
 
   return data;
 };
+
+export const fetchSystemDate = async () => {
+  const res = await fetch(`${API_URL}/api/system/date`);
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message || "Failed to fetch system date");
+  }
+
+  return data;
+};
+
+export const fetchAdminWeeklyMenu = async (token) => {
+  if (!token) {
+    throw new Error("Missing admin token");
+  }
+
+  const res = await fetch(`${API_URL}/api/admin/menu/week`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message || "Failed to fetch admin weekly menu");
+  }
+
+  return data;
+};
+
+export const saveAdminMenu = async (token, menus) => {
+  if (!token) {
+    throw new Error("Missing admin token");
+  }
+
+  const res = await fetch(`${API_URL}/api/admin/menu/week`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      menus,
+    }),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message || "Failed to save weekly menu");
+  }
+
+  return data;
+};

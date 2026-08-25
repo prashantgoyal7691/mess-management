@@ -32,3 +32,4 @@ export const fetchMonthlyAttendance = async ({
 
   return data;
 };
+

@@ -1,12 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import AdminLayout from "../../layouts/AdminLayout";
 import { useAuthStore } from "../../stores/authStore";
+import { useMealStore } from "../../stores/admin_meal_student_store";
 
 export default function AdminDashboard() {
-  const [data, setData] = useState({
-    today: { breakfast: 0, lunch: 0, dinner: 0 },
-    tomorrow: { breakfast: 0, lunch: 0, dinner: 0 },
-  });
+  const token = useAuthStore((state) => state.adminToken);
+
+  const data = useMealStore((state) => state.data);
+  const loading = useMealStore((state) => state.loading);
+  const error = useMealStore((state) => state.error);
+  const fetchMealCount = useMealStore(
+    (state) => state.fetchMealCount
+  );
 
   const formatDate = (date) => {
     return date.toLocaleDateString("en-IN", {
@@ -19,29 +24,9 @@ export default function AdminDashboard() {
   const todayDate = new Date();
   const tomorrowDate = new Date();
   tomorrowDate.setDate(todayDate.getDate() + 1);
-  const token = useAuthStore((state) => state.adminToken);
   useEffect(() => {
-    const fetchMealCount = async () => {
-      try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/meal-count`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (!res.ok) return;
-
-        const data = await res.json();
-        setData(data);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-
-    fetchMealCount();
-    const interval = setInterval(fetchMealCount, 5000);
-    return () => clearInterval(interval);
-  }, [token]);
+    fetchMealCount(token);
+  }, [token, fetchMealCount]);
 
   return (
     <AdminLayout>
@@ -53,6 +38,17 @@ export default function AdminDashboard() {
           <p className="text-gray-500 text-sm">
             Meal consumption overview
           </p>
+          {loading && (
+            <p className="text-sm text-gray-500">
+              Loading meal count...
+            </p>
+          )}
+
+          {error && (
+            <p className="text-sm text-red-500">
+              {error}
+            </p>
+          )}
         </div>
 
         {/* TABLE STYLE CARD */}

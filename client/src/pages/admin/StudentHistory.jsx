@@ -1,57 +1,62 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import AdminLayout from "../../layouts/AdminLayout";
+import { useAuthStore } from "../../stores/authStore";
+import { useReportStore } from "../../stores/reportStore";
 
 
 export default function StudentHistory() {
   const { id } = useParams();
-  const [meals, setMeals] = useState([]);
-  const [student, setStudent] = useState(null);
   const [month, setMonth] = useState("");
 
+  const token = useAuthStore((state) => state.adminToken);
+
+  const meals = useReportStore((state) => state.history);
+  const student = useReportStore(
+    (state) => state.historyStudent
+  );
+
+  const historyLoading = useReportStore(
+    (state) => state.historyLoading
+  );
+
+  const historyError = useReportStore(
+    (state) => state.historyError
+  );
+
+  const reportServerDate = useReportStore(
+    (state) => state.reportServerDate
+  );
+
+  const fetchReportServerDate = useReportStore(
+    (state) => state.fetchReportServerDate
+  );
+
+
+
+  const fetchHistory = useReportStore(
+    (state) => state.fetchHistory
+  );
+
+  const downloadHistoryPDF = useReportStore(
+    (state) => state.downloadHistoryPDF
+  );
+
   useEffect(() => {
-    const fetchServerDate = async () => {
-      try {
-        const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/system/date`,
-        );
+    if (!reportServerDate || month) return;
 
-        const data = await res.json();
+    setMonth(reportServerDate.slice(0, 7));
+  }, [reportServerDate, month]);
 
-        setMonth(data.today.slice(0, 7));
-      } catch (err) {
-        console.log(err);
-      }
-    };
-
-    fetchServerDate();
-  }, []);
+  useEffect(() => {
+    fetchReportServerDate();
+  }, [fetchReportServerDate]);
 
   useEffect(() => {
     if (!month) return;
-    const fetchHistory = async () => {
-      const url = month
-        ? `${import.meta.env.VITE_API_URL}/api/admin/student-history/${id}?month=${month}`
-        : `${import.meta.env.VITE_API_URL}/api/admin/student-history/${id}`;
-      const res = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-        },
-      });
 
-      const data = await res.json();
-      setMeals(Array.isArray(data) ? data : []);
-
-      if (Array.isArray(data) && data.length > 0) {
-        setStudent({
-          name: data[0].name,
-          enrolment: data[0].enrolment,
-        });
-      }
-    };
-
-    fetchHistory();
-  }, [id, month]);
+    fetchHistory(token, id, month);
+  }, [token, id, month, fetchHistory]);
 
   const totalMonthBill = meals.reduce((sum, m) => sum + m.total, 0);
 
@@ -61,6 +66,7 @@ export default function StudentHistory() {
         <h1 className="text-xl md:text-2xl font-bold mb-4">
           Student Meal History
         </h1>
+
         {student && (
           <div className="bg-white p-4 md:p-5 rounded-xl shadow mb-4">
             <h2 className="text-xl font-bold">{student.name}</h2>
@@ -73,6 +79,11 @@ export default function StudentHistory() {
           onChange={(e) => setMonth(e.target.value)}
           className="border p-2 rounded mb-4 w-full md:w-auto"
         />
+        {historyLoading && (
+          <div className="flex justify-center items-center p-8 text-gray-500">
+            Loading...
+          </div>
+        )}
 
         <div className="overflow-x-auto">
           <table className="w-full border min-w-[600px]">
@@ -108,24 +119,7 @@ export default function StudentHistory() {
         </div>
         <button
           className="bg-green-500 text-white px-4 py-2 rounded w-full md:w-auto mt-2"
-          onClick={async () => {
-            const res = await fetch(
-              `${import.meta.env.VITE_API_URL}/api/admin/student-history-pdf/${id}?month=${month}`,
-              {
-                headers: {
-                  Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-                },
-              },
-            );
-
-            const blob = await res.blob();
-            const url = window.URL.createObjectURL(blob);
-
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = `report-${month}.pdf`;
-            a.click();
-          }}
+          onClick={() => downloadHistoryPDF(token, id, month)}
         >
           📄 Download PDF
         </button>

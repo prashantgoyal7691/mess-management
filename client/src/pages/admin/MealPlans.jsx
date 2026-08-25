@@ -1,27 +1,34 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import AdminLayout from "../../layouts/AdminLayout";
-import axios from "axios";
+import { useAuthStore } from "../../stores/authStore";
+import { useMenuStore } from "../../stores/menuStore";
 
 
 export default function MealPlans() {
-  const [menu, setMenu] = useState({});
-  const [serverDate, setServerDate] = useState(null);
-  const [lockDate, setLockDate] = useState(null);
+  const token = useAuthStore((state) => state.adminToken);
+
+  const menu = useMenuStore((state) => state.adminMenu);
+  const serverDate = useMenuStore((state) => state.serverDate);
+  const lockDate = useMenuStore((state) => state.lockDate);
+  const loading = useMenuStore((state) => state.adminMenuLoading);
+  const saving = useMenuStore((state) => state.adminMenuSaving);
+  const error = useMenuStore((state) => state.adminMenuError);
+
+  const fetchAdminMenu = useMenuStore(
+    (state) => state.fetchAdminMenu
+  );
+
+  const updateAdminMenu = useMenuStore(
+    (state) => state.updateAdminMenu
+  );
+
+  const saveAdminMenu = useMenuStore(
+    (state) => state.saveAdminMenu
+  );
 
   useEffect(() => {
-    const fetchServerDate = async () => {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/system/date`,
-      );
-
-      const data = await res.json();
-
-      setServerDate(data.today);
-      setLockDate(data.lockDate);
-    };
-
-    fetchServerDate();
-  }, []);
+    fetchAdminMenu(token);
+  }, [token, fetchAdminMenu]);
 
   // 🔥 Generate next 7 days (dynamic UI)
   const getDates = () => {
@@ -46,39 +53,6 @@ export default function MealPlans() {
 
   const dates = serverDate ? getDates() : [];
 
-  // 🔥 Fetch menu (day-based → map to date)
-  useEffect(() => {
-    if (!serverDate) return;
-    const fetchMenus = async () => {
-      try {
-        const token = localStorage.getItem("adminToken");
-        const newMenu = {};
-
-        for (const item of dates) {
-          const res = await axios.get(
-            `${import.meta.env.VITE_API_URL}/api/admin/menu?day=${item.day}`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            },
-          );
-
-          const data = res.data || {};
-
-          newMenu[`${item.date}-breakfast`] = data.breakfast || "";
-          newMenu[`${item.date}-lunch`] = data.lunch || "";
-          newMenu[`${item.date}-dinner`] = data.dinner || "";
-        }
-
-        setMenu(newMenu);
-      } catch (err) {
-        console.log("FETCH MENU ERROR:", err);
-      }
-    };
-
-    fetchMenus();
-  }, [serverDate]);
 
   const isEditable = (date) => {
     if (!lockDate) return false;
@@ -87,50 +61,20 @@ export default function MealPlans() {
   };
 
   // 🔁 Handle change (date-based state)
-  const handleChange = (date, meal, value) => {
-    setMenu((prev) => ({
-      ...prev,
-      [`${date}-${meal}`]: value,
-    }));
+  const handleChange = (day, meal, value) => {
+    updateAdminMenu(day, meal, value);
   };
 
   // 💾 Save menu (convert date → day)
   const handleSubmit = async () => {
-    try {
-      const token = localStorage.getItem("adminToken");
-
-      for (const item of dates) {
-        if (!isEditable(item.date)) continue;
-
-        const breakfast = menu[`${item.date}-breakfast`];
-        const lunch = menu[`${item.date}-lunch`];
-        const dinner = menu[`${item.date}-dinner`];
-
-        if (!breakfast && !lunch && !dinner) continue; // 🔥 skip empty
-
-        await axios.post(
-          `${import.meta.env.VITE_API_URL}/api/admin/menu`,
-          {
-            day: item.day,
-            breakfast: menu[`${item.date}-breakfast`] || "",
-            lunch: menu[`${item.date}-lunch`] || "",
-            dinner: menu[`${item.date}-dinner`] || "",
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
-      }
-
-      alert("Weekly menu saved successfully!");
-      window.location.reload();
-    } catch (err) {
-      console.log(err);
-      alert("Error saving menu");
-    }
-  };
+  try {
+    await saveAdminMenu(token, dates);
+    alert("Weekly menu saved successfully!");
+  } catch (err) {
+    console.log(err);
+    alert(err.message || "Error saving menu");
+  }
+};
 
   return (
     <AdminLayout>
@@ -164,17 +108,16 @@ export default function MealPlans() {
                     {["breakfast", "lunch", "dinner"].map((meal) => (
                       <td key={meal} className="border p-3">
                         <textarea
-                          value={menu[`${item.date}-${meal}`] || ""}
+                          value={menu[item.day]?.[meal] || ""}
                           onChange={(e) =>
-                            handleChange(item.date, meal, e.target.value)
+                            handleChange(item.day, meal, e.target.value)
                           }
                           disabled={!isEditable(item.date)}
                           rows={2}
-                          className={`border p-2 w-full text-sm md:text-base resize-none break-words whitespace-normal ${
-                            !isEditable(item.date)
+                          className={`border p-2 w-full text-sm md:text-base resize-none break-words whitespace-normal ${!isEditable(item.date)
                               ? "bg-gray-200 cursor-not-allowed"
                               : ""
-                          }`}
+                            }`}
                           placeholder={`Enter ${meal}`}
                         />
                       </td>

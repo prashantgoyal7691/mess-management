@@ -2,13 +2,20 @@ import { create } from "zustand";
 import {
   createFeedback,
   getMyFeedbacks,
+  getAdminFeedbacks
 } from "../services/feedbackService";
 
-export const useFeedbackStore = create((set) => ({
+export const useFeedbackStore = create((set, get) => ({
   feedbacks: [],
   loading: false,
   submitting: false,
   error: null,
+  hasFetched: false,
+
+  adminFeedbacks: [],
+  adminFeedbacksLoading: false,
+  adminFeedbacksError: null,
+  adminFeedbacksLoaded: false,
 
   fetchMyFeedbacks: async (token) => {
     if (!token) {
@@ -16,6 +23,12 @@ export const useFeedbackStore = create((set) => ({
         feedbacks: [],
         error: "Authentication required",
       });
+      return;
+    }
+
+    const { hasFetched, loading } = get();
+
+    if (hasFetched || loading) {
       return;
     }
 
@@ -30,10 +43,10 @@ export const useFeedbackStore = create((set) => ({
       set({
         feedbacks: data,
         loading: false,
+        hasFetched: true,
       });
     } catch (err) {
       set({
-        feedbacks: [],
         loading: false,
         error: err.message,
       });
@@ -61,11 +74,12 @@ export const useFeedbackStore = create((set) => ({
         );
 
         if (existingIndex !== -1) {
-          const updated = [...state.feedbacks];
-          updated[existingIndex] = updatedFeedback;
+          const updatedFeedbacks = [...state.feedbacks];
+
+          updatedFeedbacks[existingIndex] = updatedFeedback;
 
           return {
-            feedbacks: updated,
+            feedbacks: updatedFeedbacks,
             submitting: false,
           };
         }
@@ -87,12 +101,57 @@ export const useFeedbackStore = create((set) => ({
     }
   },
 
+  fetchAdminFeedbacks: async (token) => {
+    if (!token) {
+      set({
+        adminFeedbacks: [],
+        adminFeedbacksError: "Authentication required",
+      });
+      return;
+    }
+
+    const {
+      adminFeedbacksLoaded,
+      adminFeedbacksLoading,
+    } = get();
+
+    if (adminFeedbacksLoaded || adminFeedbacksLoading) {
+      return;
+    }
+
+    try {
+      set({
+        adminFeedbacksLoading: true,
+        adminFeedbacksError: null,
+      });
+
+      const data = await getAdminFeedbacks(token);
+
+      set({
+        adminFeedbacks: data,
+        adminFeedbacksLoading: false,
+        adminFeedbacksLoaded: true,
+      });
+    } catch (err) {
+      set({
+        adminFeedbacksLoading: false,
+        adminFeedbacksError: err.message,
+      });
+    }
+  },
+
   clearFeedbacks: () => {
     set({
       feedbacks: [],
       loading: false,
       submitting: false,
       error: null,
+      hasFetched: false,
+
+      adminFeedbacks: [],
+      adminFeedbacksLoading: false,
+      adminFeedbacksError: null,
+      adminFeedbacksLoaded: false,
     });
   },
 }));

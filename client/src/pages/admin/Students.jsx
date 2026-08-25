@@ -1,101 +1,91 @@
 import { useEffect, useState } from "react";
 import AdminLayout from "../../layouts/AdminLayout";
 import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../../stores/authStore";
+import { useStudentsStore } from "../../stores/studentsStore";
 
 export default function Students() {
-  const [students, setStudents] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const studentsPerPage = 8;
   const navigate = useNavigate();
 
-  const fetchStudents = async () => {
-    try {
-      setLoading(true);
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/students`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-        },
-      });
+  const token = useAuthStore((state) => state.adminToken);
 
-      const data = await res.json();
-      setStudents(data);
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const students = useStudentsStore((state) => state.students);
+  const studentsLoading = useStudentsStore(
+    (state) => state.studentsLoading
+  );
+
+  const mutationLoading = useStudentsStore(
+    (state) => state.mutationLoading
+  );
+  const error = useStudentsStore((state) => state.error);
+
+  const fetchStudents = useStudentsStore(
+    (state) => state.fetchStudents,
+  );
+
+  const approveStudent = useStudentsStore(
+    (state) => state.approveStudent,
+  );
+
+  const rejectStudent = useStudentsStore(
+    (state) => state.rejectStudent,
+  );
+
+  const deleteStudent = useStudentsStore(
+    (state) => state.deleteStudent,
+  );
+
+
 
   const handleApprove = async (studentId) => {
-    if (loading) return;
+    if (mutationLoading) return;
+
     if (!window.confirm("Are you sure you want to approve this student?")) {
       return;
     }
+
     try {
-      await fetch(
-        `${import.meta.env.VITE_API_URL}/api/admin/approve-student/${studentId}`,
-        {
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-          },
-        },
-      );
-      fetchStudents();
+      await approveStudent(token, studentId);
     } catch (err) {
       console.log(err);
     }
   };
 
   const handleReject = async (studentId) => {
-    if (loading) return;
+    if (mutationLoading) return;
+
     if (!window.confirm("Are you sure you want to reject this student?")) {
       return;
     }
+
     try {
-      await fetch(
-        `${import.meta.env.VITE_API_URL}/api/admin/reject-student/${studentId}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-          },
-        },
-      );
-      fetchStudents();
+      await rejectStudent(token, studentId);
     } catch (err) {
       console.log(err);
     }
   };
 
   const handleDelete = async (studentId) => {
-    if (loading) return;
+    if (mutationLoading) return;
+
     if (!window.confirm("Are you sure you want to delete this student?")) {
       return;
     }
-    try {
-      await fetch(
-        `${import.meta.env.VITE_API_URL}/api/admin/delete-student/${studentId}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-          },
-        },
-      );
 
-      fetchStudents(); // refresh
+    try {
+      await deleteStudent(token, studentId);
     } catch (err) {
       console.log(err);
     }
   };
 
   useEffect(() => {
-    fetchStudents();
-  }, []);
+    fetchStudents(token);
+  }, [token, fetchStudents]);
 
   const filteredStudents = students.filter((s) => {
     const matchesSearch = s.enrolmentNumber
@@ -131,7 +121,7 @@ export default function Students() {
       </div>
 
       <div className="bg-white rounded-xl shadow overflow-hidden">
-        {loading && <p className="text-center p-4 text-gray-500">Loading...</p>}
+        {studentsLoading && <p className="text-center p-4 text-gray-500">Loading...</p>}
 
         <div className="flex flex-col md:flex-row gap-3 md:gap-4 mb-4">
           <input
@@ -168,7 +158,7 @@ export default function Students() {
             </thead>
 
             <tbody>
-              {!loading && filteredStudents.length === 0 && (
+              {!studentsLoading && filteredStudents.length === 0 && (
                 <tr>
                   <td colSpan="7" className="text-center p-6 text-gray-500">
                     No students found
@@ -178,9 +168,8 @@ export default function Students() {
               {currentStudents.map((s) => (
                 <tr
                   key={s._id}
-                  className={`border-t hover:bg-purple-50 cursor-pointer ${
-                    !s.isApproved ? "bg-yellow-50" : ""
-                  }`}
+                  className={`border-t hover:bg-purple-50 cursor-pointer ${!s.isApproved ? "bg-yellow-50" : ""
+                    }`}
                   onClick={() => navigate(`/admin/student/${s._id}`)}
                 >
                   <td className="p-4 font-semibold">{s.fullName}</td>
@@ -197,7 +186,7 @@ export default function Students() {
                         </span>
 
                         <button
-                          disabled={loading}
+                          disabled={mutationLoading}
                           onClick={(e) => {
                             e.stopPropagation();
                             handleDelete(s._id);
@@ -213,7 +202,7 @@ export default function Students() {
                           Pending
                         </span>
                         <button
-                          disabled={loading}
+                          disabled={mutationLoading}
                           onClick={(e) => {
                             e.stopPropagation();
                             handleApprove(s._id);
@@ -224,7 +213,7 @@ export default function Students() {
                         </button>
 
                         <button
-                          disabled={loading}
+                          disabled={mutationLoading}
                           onClick={(e) => {
                             e.stopPropagation();
                             handleReject(s._id);

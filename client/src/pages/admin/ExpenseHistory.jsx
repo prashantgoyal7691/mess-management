@@ -1,32 +1,30 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import AdminLayout from "../../layouts/AdminLayout";
+import { useAuthStore } from "../../stores/authStore";
+import { useBillingStore } from "../../stores/billingStore";
 
 export default function ExpenseHistory() {
-  const [history, setHistory] = useState([]);
+  const token = useAuthStore((state) => state.adminToken);
+
+  const history = useBillingStore(
+    (state) => state.expenseHistory
+  );
+
+  const loading = useBillingStore(
+    (state) => state.expenseHistoryLoading
+  );
+
+  const error = useBillingStore(
+    (state) => state.expenseHistoryError
+  );
+
+  const fetchExpenseHistory = useBillingStore(
+    (state) => state.fetchExpenseHistory
+  );
 
   useEffect(() => {
-    const fetchHistory = async () => {
-      try {
-        const token = localStorage.getItem("adminToken");
-
-        const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/billing/expense-history`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
-
-        const data = await res.json();
-        setHistory(data);
-      } catch (err) {
-        console.log("Error fetching history", err);
-      }
-    };
-
-    fetchHistory();
-  }, []);
+    fetchExpenseHistory(token);
+  }, [token, fetchExpenseHistory]);
 
   return (
     <AdminLayout>
@@ -47,9 +45,30 @@ export default function ExpenseHistory() {
             </thead>
 
             <tbody>
-              {history.length === 0 ? (
+              {loading ? (
                 <tr>
-                  <td colSpan="4" className="p-4 text-center text-gray-500">
+                  <td
+                    colSpan="4"
+                    className="p-4 text-center text-gray-500"
+                  >
+                    Loading...
+                  </td>
+                </tr>
+              ) : error ? (
+                <tr>
+                  <td
+                    colSpan="4"
+                    className="p-4 text-center text-red-500"
+                  >
+                    {error}
+                  </td>
+                </tr>
+              ) : history.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan="4"
+                    className="p-4 text-center text-gray-500"
+                  >
                     No data available
                   </td>
                 </tr>

@@ -12,15 +12,14 @@ import {
   getStudentHistory,
   getMesses,
   downloadStudentHistoryPDF,
-  setMenu,
-  getMenu,
-  getMenuForStudent,
+  setWeeklyMenu,
   approveStudent,
   rejectStudent,
   deleteStudent,
   adminForgotPassword,adminResetPassword,
   updateManagementFee,
   getWeeklyMenuForStudent,
+  getWeeklyMenuForAdmin,
 } from "../controllers/adminController.js";
 
 
@@ -43,9 +42,8 @@ router.get(
   downloadStudentHistoryPDF,
 );
 router.get("/messes", getMesses);
-router.post("/menu", adminAuth, setMenu);
-router.get("/menu", adminAuth, getMenu);
-router.get("/menu/student", authMiddleware, getMenuForStudent);
+router.post("/menu/week", adminAuth, setWeeklyMenu);
+router.get("/menu/week", adminAuth, getWeeklyMenuForAdmin);
 router.get("/menu/student/week", authMiddleware,getWeeklyMenuForStudent);
 router.get("/meal-count", adminAuth, getMealCount);
 router.get("/profile", adminAuth, getAdminProfile);

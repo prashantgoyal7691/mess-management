@@ -179,6 +179,68 @@ export const adminLogin = async (req, res) => {
   }
 };
 
+export const adminForgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    const admin = await Admin.findOne({ email });
+
+    if (!admin) {
+      return res.status(400).json({ message: "Admin not found" });
+    }
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    admin.otp = otp;
+    admin.otpExpiry = Date.now() + 5 * 60 * 1000;
+    await admin.save();
+
+    await sendOTPEmail(email, otp);
+
+    const check = await Admin.findOne({ email });
+
+    res.json({ message: "OTP sent to email" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Error sending OTP" });
+  }
+};
+
+export const adminResetPassword = async (req, res) => {
+  try {
+    const { email, otp, newPassword } = req.body;
+
+    const admin = await Admin.findOne({ email });
+
+    if (!admin) {
+      return res.status(400).json({ message: "Admin not found" });
+    }
+
+    const enteredOtp = String(otp).trim();
+
+    if (!admin.otp || admin.otp !== enteredOtp) {
+      return res.status(400).json({ message: "Invalid OTP" });
+    }
+
+    if (admin.otpExpiry < Date.now()) {
+      return res.status(400).json({ message: "OTP expired" });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    admin.password = hashedPassword;
+    admin.otp = null;
+    admin.otpExpiry = null;
+
+    await admin.save();
+
+    res.json({ message: "Password reset successful" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Error resetting password" });
+  }
+};
+
 /* =========================
    TOMORROW MEAL COUNT (FILTERED)
 ========================= */
@@ -493,8 +555,20 @@ export const getStudentHistory = async (req, res) => {
     const lockedMeals = meals.filter((m) => m.date <= today);
 
     const student = await User.findById(studentId).select(
-      "fullName enrolmentNumber",
+      "fullName enrolmentNumber messId",
     );
+
+    if (!student) {
+      return res.status(404).json({
+        message: "Student not found",
+      });
+    }
+
+    if (student.messId.toString() !== req.user.id) {
+      return res.status(403).json({
+        message: "Not allowed",
+      });
+    }
 
     const grouped = {};
 
@@ -576,7 +650,13 @@ export const getStudentHistory = async (req, res) => {
 
     const result = Object.values(grouped).map(({ rates, ...rest }) => rest);
 
-    res.json(result);
+    res.json({
+      student: {
+        name: student.fullName,
+        enrolment: student.enrolmentNumber,
+      },
+      meals: result,
+    });
   } catch (err) {
     console.log("STUDENT HISTORY ERROR:", err);
     res.status(500).json({ message: "Error fetching history" });
@@ -602,8 +682,20 @@ export const downloadStudentHistoryPDF = async (req, res) => {
     const lockedMeals = meals.filter((m) => m.date <= today);
 
     const student = await User.findById(studentId).select(
-      "fullName enrolmentNumber",
+      "fullName enrolmentNumber messId",
     );
+
+    if (!student) {
+      return res.status(404).json({
+        message: "Student not found",
+      });
+    }
+
+    if (student.messId.toString() !== req.user.id) {
+      return res.status(403).json({
+        message: "Not allowed",
+      });
+    }
 
     const grouped = {};
 
@@ -715,58 +807,106 @@ export const downloadStudentHistoryPDF = async (req, res) => {
   }
 };
 
-export const setMenu = async (req, res) => {
+export const setWeeklyMenu = async (req, res) => {
   try {
-    const { day, breakfast, lunch, dinner } = req.body;
+    const { menus } = req.body;
+
+    if (!Array.isArray(menus)) {
+      return res.status(400).json({
+        message: "Invalid menu data",
+      });
+    }
 
     const messId = new mongoose.Types.ObjectId(req.user.id);
 
-    const menu = await Menu.findOneAndUpdate(
-      { messId, day },
-      { breakfast, lunch, dinner },
-      { upsert: true, new: true },
-    );
+    const operations = menus.map((menu) => ({
+      updateOne: {
+        filter: {
+          messId,
+          day: menu.day,
+        },
+        update: {
+          $set: {
+            breakfast: menu.breakfast || "",
+            lunch: menu.lunch || "",
+            dinner: menu.dinner || "",
+          },
+        },
+        upsert: true,
+      },
+    }));
 
-    res.json(menu);
-  } catch (err) {
-    console.log("SET MENU ERROR:", err);
-    res.status(500).json({ message: "Error setting menu" });
-  }
-};
+    if (operations.length > 0) {
+      await Menu.bulkWrite(operations);
+    }
 
-export const getMenu = async (req, res) => {
-  try {
-    const { day } = req.query;
+    const updatedMenus = await Menu.find({ messId }).lean();
 
-    const menu = await Menu.findOne({
-      day,
-      messId: new mongoose.Types.ObjectId(req.user.id),
+    const weeklyMenu = {};
+
+    updatedMenus.forEach((menu) => {
+      weeklyMenu[menu.day] = menu;
     });
 
-    res.json(menu || {});
+    res.json(weeklyMenu);
   } catch (err) {
-    console.log("GET MENU ERROR:", err);
-    res.status(500).json({ message: "Error fetching menu" });
+    console.log("SET WEEKLY MENU ERROR:", err);
+    res.status(500).json({
+      message: "Error setting weekly menu",
+    });
   }
 };
 
-export const getMenuForStudent = async (req, res) => {
+export const getWeeklyMenuForAdmin = async (req, res) => {
   try {
-    const { day, messId } = req.query;
+    const messId = new mongoose.Types.ObjectId(req.user.id);
+
+    const menus = await Menu.find({
+      messId,
+    }).lean();
+
+    const weeklyMenu = {};
+
+    menus.forEach((menu) => {
+      weeklyMenu[menu.day] = menu;
+    });
+
+    res.json(weeklyMenu);
+  } catch (err) {
+    console.log("GET WEEKLY MENU ADMIN ERROR:", err);
+    res.status(500).json({
+      message: "Error fetching weekly menu",
+    });
+  }
+};
+
+
+export const getWeeklyMenuForStudent = async (req, res) => {
+  try {
+    const { messId } = req.query;
 
     if (!messId) {
       return res.status(400).json({ message: "messId required" });
     }
 
-    const menu = await Menu.findOne({
-      day,
+    if (!mongoose.Types.ObjectId.isValid(messId)) {
+      return res.status(400).json({ message: "Invalid messId" });
+    }
+
+    const menus = await Menu.find({
       messId: new mongoose.Types.ObjectId(messId),
+    }).lean();
+
+    const weeklyMenu = {};
+
+    menus.forEach((menu) => {
+      weeklyMenu[menu.day] = menu;
     });
 
-    res.json(menu || {});
+    res.json(weeklyMenu);
   } catch (err) {
-    console.log("GET MENU STUDENT ERROR:", err);
-    res.status(500).json({ message: "Error fetching menu" });
+    console.log("GET WEEKLY MENU STUDENT ERROR:", err);
+    res.status(500).json({ message: "Error fetching weekly menu" });
   }
 };
 
@@ -776,68 +916,6 @@ export const getMesses = async (req, res) => {
     res.json(messes);
   } catch (err) {
     res.status(500).json({ message: "Error fetching messes" });
-  }
-};
-
-export const adminForgotPassword = async (req, res) => {
-  try {
-    const { email } = req.body;
-
-    const admin = await Admin.findOne({ email });
-
-    if (!admin) {
-      return res.status(400).json({ message: "Admin not found" });
-    }
-
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-
-    admin.otp = otp;
-    admin.otpExpiry = Date.now() + 5 * 60 * 1000;
-    await admin.save();
-
-    await sendOTPEmail(email, otp);
-
-    const check = await Admin.findOne({ email });
-
-    res.json({ message: "OTP sent to email" });
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: "Error sending OTP" });
-  }
-};
-
-export const adminResetPassword = async (req, res) => {
-  try {
-    const { email, otp, newPassword } = req.body;
-
-    const admin = await Admin.findOne({ email });
-
-    if (!admin) {
-      return res.status(400).json({ message: "Admin not found" });
-    }
-
-    const enteredOtp = String(otp).trim();
-
-    if (!admin.otp || admin.otp !== enteredOtp) {
-      return res.status(400).json({ message: "Invalid OTP" });
-    }
-
-    if (admin.otpExpiry < Date.now()) {
-      return res.status(400).json({ message: "OTP expired" });
-    }
-
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-    admin.password = hashedPassword;
-    admin.otp = null;
-    admin.otpExpiry = null;
-
-    await admin.save();
-
-    res.json({ message: "Password reset successful" });
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: "Error resetting password" });
   }
 };
 
@@ -869,31 +947,5 @@ export const updateManagementFee = async (req, res) => {
   }
 };
 
-export const getWeeklyMenuForStudent = async (req, res) => {
-  try {
-    const { messId } = req.query;
 
-    if (!messId) {
-      return res.status(400).json({ message: "messId required" });
-    }
 
-    if (!mongoose.Types.ObjectId.isValid(messId)) {
-      return res.status(400).json({ message: "Invalid messId" });
-    }
-
-    const menus = await Menu.find({
-      messId: new mongoose.Types.ObjectId(messId),
-    }).lean();
-
-    const weeklyMenu = {};
-
-    menus.forEach((menu) => {
-      weeklyMenu[menu.day] = menu;
-    });
-
-    res.json(weeklyMenu);
-  } catch (err) {
-    console.log("GET WEEKLY MENU STUDENT ERROR:", err);
-    res.status(500).json({ message: "Error fetching weekly menu" });
-  }
-};

@@ -21,25 +21,8 @@ const request = async (endpoint, options = {}) => {
   return data;
 };
 
-export const createFeedback = (token, feedbackData) =>
-  request("/api/feedback/create", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(feedbackData),
-  });
-
-export const getAdminFeedbacks = (token) =>
-  request("/api/feedback/admin", {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-export const getMyFeedbacks = (token) =>
-  request("/api/feedback/my", {
+export const getMealCount = (token) =>
+  request("/api/admin/meal-count", {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,

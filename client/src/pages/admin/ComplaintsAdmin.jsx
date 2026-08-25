@@ -1,29 +1,34 @@
 import { useEffect, useState } from "react";
 import AdminLayout from "../../layouts/AdminLayout";
+import { useAuthStore } from "../../stores/authStore";
+import { useComplaintStore } from "../../stores/complaintStore";
 
 export default function ComplaintsAdmin() {
-  const [complaints, setComplaints] = useState([]);
   const [updates, setUpdates] = useState({});
 
+  const token = useAuthStore((state) => state.adminToken);
+  const complaints = useComplaintStore(
+    (state) => state.adminComplaints
+  );
+  const loading = useComplaintStore(
+    (state) => state.adminComplaintsLoading
+  );
+  const updating = useComplaintStore(
+    (state) => state.adminComplaintsUpdating
+  );
+  const error = useComplaintStore(
+    (state) => state.adminComplaintsError
+  );
+  const fetchAdminComplaints = useComplaintStore(
+    (state) => state.fetchAdminComplaints
+  );
+  const updateAdminComplaint = useComplaintStore(
+    (state) => state.updateAdminComplaint
+  );
+
   useEffect(() => {
-    const fetchComplaints = async () => {
-      const token = localStorage.getItem("adminToken");
-
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/complaint/admin`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-
-      const data = await res.json();
-      setComplaints(data);
-    };
-
-    fetchComplaints();
-  }, []);
+    fetchAdminComplaints(token);
+  }, [token, fetchAdminComplaints]);
 
   const handleChange = (id, field, value) => {
     setUpdates((prev) => ({
@@ -37,25 +42,17 @@ export default function ComplaintsAdmin() {
 
   const handleUpdate = async (id) => {
     try {
-      const token = localStorage.getItem("adminToken");
-
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/complaint/${id}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(updates[id] || {}),
-        },
+      await updateAdminComplaint(
+        token,
+        id,
+        updates[id] || {},
       );
 
-      const data = await res.json();
-
-      setComplaints((prev) =>
-        prev.map((c) => (c._id === id ? data.complaint : c)),
-      );
+      setUpdates((prev) => {
+        const next = { ...prev };
+        delete next[id];
+        return next;
+      });
     } catch (err) {
       console.log(err);
     }
@@ -65,6 +62,16 @@ export default function ComplaintsAdmin() {
     <AdminLayout>
       <div className="p-4 md:p-6">
         <h1 className="text-xl md:text-2xl font-bold mb-4 ">Complaints</h1>
+        {!loading && complaints.length === 0 && (
+          <div className="text-center p-6 text-gray-500">
+            No complaints found.
+          </div>
+        )}
+        {error && (
+          <div className="text-center p-4 text-red-500">
+            {error}
+          </div>
+        )}
 
         {complaints.map((item) => (
           <div key={item._id} className="bg-white p-4 md:p-5 rounded-lg shadow mb-4">
@@ -99,6 +106,7 @@ export default function ComplaintsAdmin() {
 
             <button
               onClick={() => handleUpdate(item._id)}
+              disabled={updating}
               className="mt-3 bg-blue-600 text-white px-4 py-2 rounded w-full md:w-auto"
             >
               Update

@@ -51,3 +51,65 @@ export const downloadInvoice = async ({
 
   return response.blob();
 };
+
+export const setDailyExpense = async ({
+  token,
+  breakfastCost,
+  lunchCost,
+  dinnerCost,
+}) => {
+  if (!token) {
+    throw new Error("Authentication required");
+  }
+
+  const res = await fetch(
+    `${API_URL}/api/billing/set-expense`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        breakfastCost,
+        lunchCost,
+        dinnerCost,
+      }),
+    },
+  );
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(
+      data.message || "Failed to save expense",
+    );
+  }
+
+  return data;
+};
+
+export const fetchExpenseHistory = async (token) => {
+  if (!token) {
+    throw new Error("Authentication required");
+  }
+
+  const res = await fetch(
+    `${API_URL}/api/billing/expense-history`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(
+      data.message || "Failed to fetch expense history",
+    );
+  }
+
+  return data;
+};
