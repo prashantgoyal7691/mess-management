@@ -11,6 +11,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
     { name: "Plan Menu", path: "/admin/meal-plans" },
     { name: "Feedbacks", path: "/admin/feedbacks" },
     { name: "Complaints", path: "/admin/complaints" },
+    { name: "Update User", path: "/admin/user-update" },
     { name: "Admin Details", path: "/admin/details" },
     { name: "Set Expense", path: "/admin/set-expense" },
   ];

@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import Home from "../pages/Home";
+import UserUpdate from "../pages/admin/UserUpdate";
+
 
 import Login from "../pages/student/auth/Login";
 import Signup from "../pages/student/auth/Signup";
@@ -178,6 +180,15 @@ export default function AppRoutes() {
           element={
             <AdminProtectedRoute>
               <ComplaintsAdmin />
+            </AdminProtectedRoute>
+          }
+        />
+
+         <Route
+          path="/admin/user-update"
+          element={
+            <AdminProtectedRoute>
+              <UserUpdate />
             </AdminProtectedRoute>
           }
         />

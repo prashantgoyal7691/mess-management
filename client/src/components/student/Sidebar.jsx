@@ -9,10 +9,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
     { name: "Attendance", path: "/student/attendance"},
     { name: "Menu", path: "/student/menu"},
     { name: "Feedback", path: "/student/feedback"},
-    {
-      name: "Complaints",
-      path: "/student/complaints",
-    },
+    {name: "Complaints",path: "/student/complaints"},
     { name: "Student Details", path: "/student/details"},
 
   ];

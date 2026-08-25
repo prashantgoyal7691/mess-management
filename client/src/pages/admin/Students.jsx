@@ -1,3 +1,4 @@
+import { toast } from "react-hot-toast";
 import { useEffect, useState } from "react";
 import AdminLayout from "../../layouts/AdminLayout";
 import { useNavigate } from "react-router-dom";
@@ -11,6 +12,7 @@ export default function Students() {
   const studentsPerPage = 8;
   const navigate = useNavigate();
 
+
   const fetchStudents = async () => {
     try {
       setLoading(true);
@@ -19,7 +21,6 @@ export default function Students() {
           Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
         },
       });
-
       const data = await res.json();
       setStudents(data);
     } catch (err) {
@@ -35,7 +36,7 @@ export default function Students() {
       return;
     }
     try {
-      await fetch(
+      const res = await fetch(
         `${import.meta.env.VITE_API_URL}/api/admin/approve-student/${studentId}`,
         {
           method: "PUT",
@@ -44,9 +45,20 @@ export default function Students() {
           },
         },
       );
+      if (!res.ok) {
+        let data;
+        try {
+          data = await res.json();
+        } catch {
+          data = {};
+        }
+        throw new Error(data.message || "Failed to approve student.");
+      }
+      toast.success("Student approved successfully.");
       fetchStudents();
     } catch (err) {
       console.log(err);
+      toast.error(err.message || "Operation failed. Please try again.");
     }
   };
 
@@ -56,7 +68,7 @@ export default function Students() {
       return;
     }
     try {
-      await fetch(
+      const res = await fetch(
         `${import.meta.env.VITE_API_URL}/api/admin/reject-student/${studentId}`,
         {
           method: "DELETE",
@@ -65,9 +77,20 @@ export default function Students() {
           },
         },
       );
+      if (!res.ok) {
+        let data;
+        try {
+          data = await res.json();
+        } catch {
+          data = {};
+        }
+        throw new Error(data.message || "Failed to reject student.");
+      }
+      toast.success("Student rejected successfully.");
       fetchStudents();
     } catch (err) {
       console.log(err);
+      toast.error(err.message || "Operation failed. Please try again.");
     }
   };
 
@@ -77,7 +100,7 @@ export default function Students() {
       return;
     }
     try {
-      await fetch(
+      const res = await fetch(
         `${import.meta.env.VITE_API_URL}/api/admin/delete-student/${studentId}`,
         {
           method: "DELETE",
@@ -86,10 +109,20 @@ export default function Students() {
           },
         },
       );
-
+      if (!res.ok) {
+        let data;
+        try {
+          data = await res.json();
+        } catch {
+          data = {};
+        }
+        throw new Error(data.message || "Failed to delete student.");
+      }
+      toast.success("Student deleted successfully.");
       fetchStudents(); // refresh
     } catch (err) {
       console.log(err);
+      toast.error(err.message || "Operation failed. Please try again.");
     }
   };
 
