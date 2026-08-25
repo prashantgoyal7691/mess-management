@@ -1,7 +1,9 @@
 import { useState } from "react";
+
 import StudentLayout from "../../layouts/StudentLayout";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../stores/authStore";
+import { useFeedbackStore } from "../../stores/feedbackStore";
 
 export default function Feedback() {
   const [meal, setMeal] = useState("");
@@ -10,6 +12,14 @@ export default function Feedback() {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
   const token = useAuthStore((state) => state.studentToken);
+
+  const submitFeedback = useFeedbackStore(
+    (state) => state.submitFeedback,
+  );
+
+  const submitting = useFeedbackStore(
+    (state) => state.submitting,
+  );
   const handleSubmit = async () => {
     if (!meal || rating === 0 || !message.trim()) {
       alert("Please fill all fields");
@@ -17,25 +27,10 @@ export default function Feedback() {
     }
 
     try {
-      
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/feedback/create`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          type: meal,
-          message: `${rating}⭐ | ${message}`,
-        }),
+      await submitFeedback(token, {
+        type: meal,
+        message: `${rating}⭐ | ${message}`,
       });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        alert(data.message);
-        return;
-      }
 
       alert("Feedback submitted!");
 
@@ -44,7 +39,7 @@ export default function Feedback() {
       setMessage("");
     } catch (err) {
       console.log(err);
-      alert("Error submitting feedback");
+      alert(err.message || "Error submitting feedback");
     }
   };
 
@@ -79,11 +74,10 @@ export default function Feedback() {
                 <button
                   key={item}
                   onClick={() => setMeal(item)}
-                  className={`px-4 py-2 rounded-lg border transition ${
-                    meal === item
-                      ? "bg-blue-600 text-white shadow"
-                      : "hover:bg-gray-100"
-                  }`}
+                  className={`px-4 py-2 rounded-lg border transition ${meal === item
+                    ? "bg-blue-600 text-white shadow"
+                    : "hover:bg-gray-100"
+                    }`}
                 >
                   {item}
                 </button>
@@ -101,11 +95,10 @@ export default function Feedback() {
                   onClick={() => setRating(star)}
                   onMouseEnter={() => setHover(star)}
                   onMouseLeave={() => setHover(0)}
-                  className={`transition ${
-                    (hover || rating) >= star
-                      ? "text-yellow-400 scale-110"
-                      : "text-gray-300"
-                  }`}
+                  className={`transition ${(hover || rating) >= star
+                    ? "text-yellow-400 scale-110"
+                    : "text-gray-300"
+                    }`}
                 >
                   ★
                 </span>
@@ -127,9 +120,11 @@ export default function Feedback() {
           {/* Submit */}
           <button
             onClick={handleSubmit}
-            className="w-full bg-blue-600 text-white py-3 rounded-lg shadow-md hover:bg-blue-700 hover:shadow-lg transition-all font-medium"
+            disabled={submitting}
+            className={`w-full bg-blue-600 text-white py-3 rounded-lg shadow-md hover:bg-blue-700 hover:shadow-lg transition-all font-medium ${submitting ? "opacity-50 cursor-not-allowed" : ""
+              }`}
           >
-            Submit Feedback
+            {submitting ? "Submitting..." : "Submit Feedback"}
           </button>
         </div>
       </div>

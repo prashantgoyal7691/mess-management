@@ -2,26 +2,6 @@ import StudentLayout from "../../layouts/StudentLayout";
 import { useAuthStore } from "../../stores/authStore";
 
 export default function StudentDetails() {
-  // const [user, setUser] = useState(null);
-
-  // useEffect(() => {
-  //   const fetchUser = async () => {
-  //     try {
-  //       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/profile`, {
-  //         headers: {
-  //           Authorization: `Bearer ${localStorage.getItem("studentToken")}`,
-  //         },
-  //       });
-
-  //       const data = await res.json();
-  //       setUser(data); // 🔥 THIS WAS MISSING
-  //     } catch (err) {
-  //       console.log(err);
-  //     }
-  //   };
-
-  //   fetchUser();
-  // }, []);
   const user = useAuthStore((state) => state.user);
   
   if (!user) {

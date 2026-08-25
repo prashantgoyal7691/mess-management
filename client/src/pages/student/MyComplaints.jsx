@@ -1,37 +1,22 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import StudentLayout from "../../layouts/StudentLayout";
+import { useAuthStore } from "../../stores/authStore";
+import { useComplaintStore } from "../../stores/complaintStore";
 
 export default function MyComplaints() {
-  const [complaints, setComplaints] = useState([]);
+  const token = useAuthStore((state) => state.studentToken);
+  const { complaints, loading, error, fetchMyComplaints } = useComplaintStore();
 
   useEffect(() => {
-    const fetchComplaints = async () => {
-      try {
-        const token = localStorage.getItem("studentToken");
-
-        const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/complaint/my`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        const data = await res.json();
-        setComplaints(data);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-
-    fetchComplaints();
-  }, []);
+    fetchMyComplaints(token);
+  }, [token, fetchMyComplaints]);
 
   const getStatusColor = (status) => {
     if (status === "pending") return "bg-yellow-100 text-yellow-700";
     if (status === "in-progress") return "bg-blue-100 text-blue-700";
     if (status === "resolved") return "bg-green-100 text-green-700";
+
+    return "bg-gray-100 text-gray-700";
   };
 
   return (
@@ -39,7 +24,11 @@ export default function MyComplaints() {
       <div className="max-w-3xl mx-auto px-4 md:px-6">
         <h1 className="text-xl md:text-3xl font-bold mb-6">My Complaints</h1>
 
-        {complaints.length === 0 ? (
+        {loading ? (
+          <p className="text-gray-500">Loading complaints...</p>
+        ) : error ? (
+          <p className="text-red-500">{error}</p>
+        ) : complaints.length === 0 ? (
           <p className="text-gray-500">No complaints submitted yet.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

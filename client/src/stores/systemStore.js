@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { getSystemDate } from "../services/systemService";
 
 export const useSystemStore = create((set) => ({
-  today: null,
+  today: "",
   lockDate: null,
   loading: false,
 

@@ -1,32 +1,21 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import StudentLayout from "../../layouts/StudentLayout";
+import { useAuthStore } from "../../stores/authStore";
+import { useFeedbackStore } from "../../stores/feedbackStore";
 
 export default function MyFeedbacks() {
-  const [data, setData] = useState([]);
+  const token = useAuthStore((state) => state.studentToken);
+
+  const feedbacks = useFeedbackStore((state) => state.feedbacks);
+  const loading = useFeedbackStore((state) => state.loading);
+  const error = useFeedbackStore((state) => state.error);
+  const fetchMyFeedbacks = useFeedbackStore(
+    (state) => state.fetchMyFeedbacks,
+  );
 
   useEffect(() => {
-    const fetchFeedbacks = async () => {
-      try {
-        const token = localStorage.getItem("studentToken");
-
-        const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/feedback/my`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
-
-        const result = await res.json();
-        setData(result);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-
-    fetchFeedbacks();
-  }, []);
+    fetchMyFeedbacks(token);
+  }, [token, fetchMyFeedbacks]);
 
   return (
     <StudentLayout>
@@ -35,11 +24,15 @@ export default function MyFeedbacks() {
           My Feedback History
         </h1>
 
-        {data.length === 0 ? (
+        {loading ? (
+          <p className="text-gray-500">Loading feedbacks...</p>
+        ) : error ? (
+          <p className="text-red-500">{error}</p>
+        ) : feedbacks.length === 0 ? (
           <p className="text-gray-500">No feedback submitted yet.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {data.map((item) => (
+            {feedbacks.map((item) => (
               <div
                 key={item._id}
                 className="bg-white border rounded-lg p-3 md:p-4 mb-4 shadow"

@@ -3,6 +3,7 @@ import StudentLayout from "../../layouts/StudentLayout";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../stores/authStore";
 import { useSystemStore } from "../../stores/systemStore";
+import { useComplaintStore } from "../../stores/complaintStore"
 
 export default function Complaints() {
   const [title, setTitle] = useState("");
@@ -12,6 +13,13 @@ export default function Complaints() {
   const token = useAuthStore((state) => state.studentToken);
   const date = useSystemStore((state) => state.today);
 
+  const submitComplaint = useComplaintStore(
+    (state) => state.submitComplaint
+  );
+
+  const submitting = useComplaintStore(
+    (state) => state.submitting
+  );
 
   const handleSubmit = async () => {
     if (!title.trim() || !description.trim()) {
@@ -20,39 +28,21 @@ export default function Complaints() {
     }
 
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/complaint/create`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            category: type,
-            title,
-            description,
-            date,
-          }),
-        },
-      );
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        alert(data.message);
-        return;
-      }
+      await submitComplaint(token, {
+        category: type,
+        title,
+        description,
+        date,
+      });
 
       alert("Complaint submitted!");
 
-      // Reset form
       setType("Food Quality");
       setTitle("");
       setDescription("");
     } catch (err) {
       console.log(err);
-      alert("Error submitting complaint");
+      alert(err.message || "Error submitting complaint");
     }
   };
 
@@ -98,7 +88,7 @@ export default function Complaints() {
             <input
               type="date"
               value={date}
-              onChange={(e) => setDate(e.target.value)}
+              readOnly
               className="w-full border rounded-lg p-2 md:p-3 text-sm md:text-base focus:outline-none focus:border-red-500"
             />
           </div>
@@ -130,9 +120,11 @@ export default function Complaints() {
           {/* Button */}
           <button
             onClick={handleSubmit}
-            className="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700 transition font-medium"
+            disabled={submitting}
+            className={`w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700 transition font-medium ${submitting ? "opacity-50 cursor-not-allowed" : ""
+              }`}
           >
-            Submit Complaint
+            {submitting ? "Submitting..." : "Submit Complaint"}
           </button>
         </div>
       </div>
