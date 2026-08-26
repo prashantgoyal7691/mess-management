@@ -13,6 +13,8 @@ import { generateInvoicesForPreviousMonth } from "./jobs/invoiceGenerator.js";
 import cron from "node-cron";
 import { lockOldMeals } from "./jobs/lockMeals.js";
 import systemRoutes from "./routes/systemRoutes.js";
+import profileUpdateRoutes from "./routes/profileUpdateRoutes.js";
+
 
 
 dotenv.config();
@@ -34,9 +36,13 @@ app.use(express.json());
 
 
 // routes
+
 app.use("/api/system", systemRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
+
+app.use("/api/student", profileUpdateRoutes);
+
 app.use("/api/feedback", feedbackRoutes);
 app.use("/api/meal", mealPlanRoutes);
 app.use("/api/complaint", complaintRoutes);

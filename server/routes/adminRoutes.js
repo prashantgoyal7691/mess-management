@@ -23,8 +23,35 @@ import {
   getWeeklyMenuForStudent,
 } from "../controllers/adminController.js";
 
+import {
+  getProfileUpdateRequests,
+  approveProfileUpdate,
+  rejectProfileUpdate,
+} from "../controllers/profileUpdateController.js";
 
 const router = express.Router();
+
+
+
+
+router.get(
+  "/profile-update-requests",
+  adminAuth,
+  getProfileUpdateRequests,
+);
+
+router.put(
+  "/profile-update-requests/:studentId/approve",
+  adminAuth,
+  approveProfileUpdate,
+);
+
+router.delete(
+  "/profile-update-requests/:studentId/reject",
+  adminAuth,
+  rejectProfileUpdate,
+);
+
 
 router.post("/send-otp", sendAdminOtp);
 router.post("/verify-otp", verifyAdminOtpAndSignup);
