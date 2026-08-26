@@ -9,6 +9,7 @@ export default function Navbar({ setIsOpen }) {
     { name: "Students", path: "/admin/students" },
     { name: "Reports", path: "/admin/reports" },
     { name: "Complaints", path: "/admin/complaints" },
+    { name: "Update User", path: "/admin/UpdateUser" },
     { name: "Admin Details", path: "/admin/details" },
   ];
 

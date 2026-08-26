@@ -369,7 +369,7 @@ export const getStudentProfile = async (req, res) => {
     const user = await User.findById(userId)
       .populate("messId", "messCode messName")
       .select(
-        "fullName email hostelName enrolmentNumber roomNumber phone messId isApproved",
+        "fullName email hostelName enrolmentNumber roomNumber phone messId isApproved pendingProfileUpdate",
       );
 
     res.json(user);

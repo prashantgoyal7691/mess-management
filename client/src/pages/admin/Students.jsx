@@ -1,3 +1,4 @@
+import { toast } from "react-hot-toast";
 import { useEffect, useState } from "react";
 import AdminLayout from "../../layouts/AdminLayout";
 import { useNavigate } from "react-router-dom";
@@ -8,6 +9,7 @@ export default function Students() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
+
   const studentsPerPage = 8;
   const navigate = useNavigate();
 
@@ -17,29 +19,23 @@ export default function Students() {
   const studentsLoading = useStudentsStore(
     (state) => state.studentsLoading
   );
-
   const mutationLoading = useStudentsStore(
     (state) => state.mutationLoading
   );
   const error = useStudentsStore((state) => state.error);
 
   const fetchStudents = useStudentsStore(
-    (state) => state.fetchStudents,
+    (state) => state.fetchStudents
   );
-
   const approveStudent = useStudentsStore(
-    (state) => state.approveStudent,
+    (state) => state.approveStudent
   );
-
   const rejectStudent = useStudentsStore(
-    (state) => state.rejectStudent,
+    (state) => state.rejectStudent
   );
-
   const deleteStudent = useStudentsStore(
-    (state) => state.deleteStudent,
+    (state) => state.deleteStudent
   );
-
-
 
   const handleApprove = async (studentId) => {
     if (mutationLoading) return;
@@ -50,8 +46,10 @@ export default function Students() {
 
     try {
       await approveStudent(token, studentId);
+      toast.success("Student approved successfully.");
     } catch (err) {
       console.log(err);
+      toast.error(err.message || "Operation failed. Please try again.");
     }
   };
 
@@ -64,8 +62,10 @@ export default function Students() {
 
     try {
       await rejectStudent(token, studentId);
+      toast.success("Student rejected successfully.");
     } catch (err) {
       console.log(err);
+      toast.error(err.message || "Operation failed. Please try again.");
     }
   };
 
@@ -78,8 +78,10 @@ export default function Students() {
 
     try {
       await deleteStudent(token, studentId);
+      toast.success("Student deleted successfully.");
     } catch (err) {
       console.log(err);
+      toast.error(err.message || "Operation failed. Please try again.");
     }
   };
 
@@ -103,11 +105,14 @@ export default function Students() {
   const indexOfLast = currentPage * studentsPerPage;
   const indexOfFirst = indexOfLast - studentsPerPage;
 
-  const currentStudents = filteredStudents.slice(indexOfFirst, indexOfLast);
+  const currentStudents = filteredStudents.slice(
+    indexOfFirst,
+    indexOfLast
+  );
 
   const totalPages = Math.max(
     1,
-    Math.ceil(filteredStudents.length / studentsPerPage),
+    Math.ceil(filteredStudents.length / studentsPerPage)
   );
 
   useEffect(() => {
@@ -117,11 +122,23 @@ export default function Students() {
   return (
     <AdminLayout>
       <div className="p-4 md:p-6">
-        <h1 className="text-xl md:text-2xl font-bold mb-6">Students</h1>
+        <h1 className="text-xl md:text-2xl font-bold mb-6">
+          Students
+        </h1>
       </div>
 
       <div className="bg-white rounded-xl shadow overflow-hidden">
-        {studentsLoading && <p className="text-center p-4 text-gray-500">Loading...</p>}
+        {studentsLoading && (
+          <p className="text-center p-4 text-gray-500">
+            Loading...
+          </p>
+        )}
+
+        {error && !studentsLoading && (
+          <p className="text-center p-4 text-red-500">
+            {error}
+          </p>
+        )}
 
         <div className="flex flex-col md:flex-row gap-3 md:gap-4 mb-4">
           <input
@@ -160,24 +177,49 @@ export default function Students() {
             <tbody>
               {!studentsLoading && filteredStudents.length === 0 && (
                 <tr>
-                  <td colSpan="7" className="text-center p-6 text-gray-500">
+                  <td
+                    colSpan="7"
+                    className="text-center p-6 text-gray-500"
+                  >
                     No students found
                   </td>
                 </tr>
               )}
+
               {currentStudents.map((s) => (
                 <tr
                   key={s._id}
-                  className={`border-t hover:bg-purple-50 cursor-pointer ${!s.isApproved ? "bg-yellow-50" : ""
-                    }`}
-                  onClick={() => navigate(`/admin/student/${s._id}`)}
+                  className={`border-t hover:bg-purple-50 cursor-pointer ${
+                    !s.isApproved ? "bg-yellow-50" : ""
+                  }`}
+                  onClick={() =>
+                    navigate(`/admin/student/${s._id}`)
+                  }
                 >
-                  <td className="p-4 font-semibold">{s.fullName}</td>
-                  <td className="p-4">{s.email}</td>
-                  <td className="p-4">{s.hostelName}</td>
-                  <td className="p-4">{s.roomNumber}</td>
-                  <td className="p-4">{s.enrolmentNumber}</td>
-                  <td className="p-4">{s.phone}</td>
+                  <td className="p-4 font-semibold">
+                    {s.fullName}
+                  </td>
+
+                  <td className="p-4">
+                    {s.email}
+                  </td>
+
+                  <td className="p-4">
+                    {s.hostelName}
+                  </td>
+
+                  <td className="p-4">
+                    {s.roomNumber}
+                  </td>
+
+                  <td className="p-4">
+                    {s.enrolmentNumber}
+                  </td>
+
+                  <td className="p-4">
+                    {s.phone}
+                  </td>
+
                   <td className="p-4">
                     {s.isApproved ? (
                       <div className="flex gap-2">
@@ -191,7 +233,7 @@ export default function Students() {
                             e.stopPropagation();
                             handleDelete(s._id);
                           }}
-                          className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm"
+                          className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm disabled:opacity-50"
                         >
                           Delete
                         </button>
@@ -201,13 +243,14 @@ export default function Students() {
                         <span className="text-yellow-600 bg-yellow-100 px-2 py-1 rounded text-xs">
                           Pending
                         </span>
+
                         <button
                           disabled={mutationLoading}
                           onClick={(e) => {
                             e.stopPropagation();
                             handleApprove(s._id);
                           }}
-                          className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm"
+                          className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm disabled:opacity-50"
                         >
                           Approve
                         </button>
@@ -218,7 +261,7 @@ export default function Students() {
                             e.stopPropagation();
                             handleReject(s._id);
                           }}
-                          className="bg-red-500 text-white px-3 py-1 rounded text-sm"
+                          className="bg-red-500 text-white px-3 py-1 rounded text-sm disabled:opacity-50"
                         >
                           Reject
                         </button>
@@ -234,7 +277,9 @@ export default function Students() {
         <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 p-4">
           <button
             disabled={currentPage === 1}
-            onClick={() => setCurrentPage((prev) => prev - 1)}
+            onClick={() =>
+              setCurrentPage((prev) => prev - 1)
+            }
             className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
           >
             Prev
@@ -246,7 +291,9 @@ export default function Students() {
 
           <button
             disabled={currentPage >= totalPages}
-            onClick={() => setCurrentPage((prev) => prev + 1)}
+            onClick={() =>
+              setCurrentPage((prev) => prev + 1)
+            }
             className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
           >
             Next

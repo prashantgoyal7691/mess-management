@@ -16,11 +16,18 @@ import {
   approveStudent,
   rejectStudent,
   deleteStudent,
-  adminForgotPassword,adminResetPassword,
+  adminForgotPassword,
+  adminResetPassword,
   updateManagementFee,
   getWeeklyMenuForStudent,
   getWeeklyMenuForAdmin,
 } from "../controllers/adminController.js";
+
+import {
+  getProfileUpdateRequests,
+  approveProfileUpdate,
+  rejectProfileUpdate,
+} from "../controllers/profileUpdateController.js";
 
 
 const router = express.Router();
@@ -51,6 +58,24 @@ router.put(
   "/management-fee",
   adminAuth,
   updateManagementFee
+);
+
+router.get(
+  "/profile-update-requests",
+  adminAuth,
+  getProfileUpdateRequests,
+);
+
+router.put(
+  "/profile-update-requests/:studentId/approve",
+  adminAuth,
+  approveProfileUpdate,
+);
+
+router.delete(
+  "/profile-update-requests/:studentId/reject",
+  adminAuth,
+  rejectProfileUpdate,
 );
 
 export default router;

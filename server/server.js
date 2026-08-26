@@ -64,7 +64,7 @@ cron.schedule("*/5 * * * *", async () => {
   }
 });
 
-cron.schedule("0 * * * *", async () => {
+cron.schedule("* * * * *", async () => {
   console.log("Running invoice reconciliation job...");
   try {
     await generateInvoicesForPreviousMonth();

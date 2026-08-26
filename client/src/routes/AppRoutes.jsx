@@ -37,6 +37,7 @@ import ComplaintsAdmin from "../pages/admin/ComplaintsAdmin";
 import FeedbacksAdmin from "../pages/admin/feedbacksAdmin";
 import StudentHistory from "../pages/admin/StudentHistory";
 import StudentDetailsAdmin from "../pages/admin/StudentDetailsAdmin";
+import UserUpdate from "../pages/admin/UserUpdate";
 
 export default function AppRoutes() {
   return (
@@ -178,6 +179,15 @@ export default function AppRoutes() {
           element={
             <AdminProtectedRoute>
               <ComplaintsAdmin />
+            </AdminProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/user-update"
+          element={
+            <AdminProtectedRoute>
+              <UserUpdate />
             </AdminProtectedRoute>
           }
         />

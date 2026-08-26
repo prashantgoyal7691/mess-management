@@ -9,7 +9,9 @@ export const generateInvoicesForPreviousMonth = async () => {
     }),
   );
 
-  indiaNow.setMonth(indiaNow.getMonth() - 1);
+  indiaNow.setMonth(
+    indiaNow.getMonth() - 1,
+  );
 
   const month = `${indiaNow.getFullYear()}-${String(
     indiaNow.getMonth() + 1,
@@ -20,46 +22,67 @@ export const generateInvoicesForPreviousMonth = async () => {
   }).select("_id messId");
 
   let generated = 0;
-
+  console.log("Invoice month:", month);
+  console.log("Approved students:", students.length);
   for (const student of students) {
-    const existingInvoice = await MonthlyInvoice.findOne({
-      userId: student._id,
-      month,
-    })
-      .select("_id")
-      .lean();
+    const existingInvoice =
+      await MonthlyInvoice.findOne({
+        userId: student._id,
+        month,
+      })
+        .select("_id")
+        .lean();
 
     if (existingInvoice) {
       continue;
     }
 
-    const summary = await calculateMonthSummary(
-      student._id,
-      student.messId,
-      month,
-    );
+    const summary =
+      await calculateMonthSummary(
+        student._id,
+        month,
+      );
 
-    if (
+    const totalMeals =
       summary.breakfastTaken +
-        summary.lunchTaken +
-        summary.dinnerTaken ===
-      0
-    ) {
+      summary.lunchTaken +
+      summary.dinnerTaken;
+
+    if (totalMeals === 0) {
       continue;
     }
 
+    const primaryMessId =
+      summary.messBreakdown.length === 1
+        ? summary.messBreakdown[0].messId
+        : student.messId;
+
     await MonthlyInvoice.create({
       userId: student._id,
-      messId: student.messId,
+      messId: primaryMessId,
+
       month,
 
-      breakfastCount: summary.breakfastTaken,
-      lunchCount: summary.lunchTaken,
-      dinnerCount: summary.dinnerTaken,
+      messBreakdown:
+        summary.messBreakdown,
 
-      foodBill: summary.foodBill,
-      managementFee: summary.managementFee,
-      totalBill: summary.totalBill,
+      breakfastCount:
+        summary.breakfastTaken,
+
+      lunchCount:
+        summary.lunchTaken,
+
+      dinnerCount:
+        summary.dinnerTaken,
+
+      foodBill:
+        summary.foodBill,
+
+      managementFee:
+        summary.managementFee,
+
+      totalBill:
+        summary.totalBill,
     });
 
     generated++;
@@ -67,7 +90,13 @@ export const generateInvoicesForPreviousMonth = async () => {
     console.log(
       `Invoice generated for ${student._id} (${month})`,
     );
+
+    console.log("Student:", student._id.toString());
+    console.log("Summary:", summary);
+    console.log("Total meals:", totalMeals);
   }
+
+
 
   console.log(
     `Generated ${generated} invoices for ${month}`,

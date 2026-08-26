@@ -6,7 +6,6 @@ import MonthlyInvoice from "../models/MonthlyInvoice.js";
 import { getMealCounts, getMealRates } from "../utils/billingHelper.js";
 import { calculateMonthSummary } from "../utils/monthlySummaryHelper.js";
 import { generateInvoicesForPreviousMonth } from "../jobs/invoiceGenerator.js";
-import Admin from "../models/Admin.js";
 import PDFDocument from "pdfkit";
 
 // ADMIN SET EXPENSE
@@ -123,18 +122,24 @@ export const getMyInvoices = async (req, res) => {
   }
 };
 
-export const getMonthlySummary = async (req, res) => {
+export const getMonthlySummary = async (req, res,) => {
   try {
     const { month } = req.query;
 
-    if (!month || !/^\d{4}-\d{2}$/.test(month)) {
+    if (
+      !month ||
+      !/^\d{4}-\d{2}$/.test(month)
+    ) {
       return res.status(400).json({
-        message: "Invalid month. Use YYYY-MM",
+        message:
+          "Invalid month. Use YYYY-MM",
       });
     }
 
-    const user = await User.findById(req.user.id)
-      .select("_id messId")
+    const user = await User.findById(
+      req.user.id,
+    )
+      .select("_id")
       .lean();
 
     if (!user) {
@@ -143,41 +148,59 @@ export const getMonthlySummary = async (req, res) => {
       });
     }
 
-    const invoice = await MonthlyInvoice.findOne({
-      userId: user._id,
-      month,
-    }).lean();
+    const invoice =
+      await MonthlyInvoice.findOne({
+        userId: user._id,
+        month,
+      }).lean();
 
     if (invoice) {
       return res.json({
         month: invoice.month,
-        breakfastTaken: invoice.breakfastCount,
-        lunchTaken: invoice.lunchCount,
-        dinnerTaken: invoice.dinnerCount,
-        foodBill: invoice.foodBill,
-        managementFee: invoice.managementFee,
-        totalBill: invoice.totalBill,
+
+        breakfastTaken:
+          invoice.breakfastCount,
+
+        lunchTaken:
+          invoice.lunchCount,
+
+        dinnerTaken:
+          invoice.dinnerCount,
+
+        foodBill:
+          invoice.foodBill,
+
+        managementFee:
+          invoice.managementFee,
+
+        totalBill:
+          invoice.totalBill,
+
+        messBreakdown:
+          invoice.messBreakdown || [],
+
         status:
           invoice.paymentStatus === "paid"
             ? "Paid"
             : "Pending",
+
         paid:
           invoice.paymentStatus === "paid",
       });
     }
 
-    const summary = await calculateMonthSummary(
-      user._id,
-      user.messId,
-      month,
-    );
+    const summary =
+      await calculateMonthSummary(
+        user._id,
+        month,);
 
     res.json(summary);
   } catch (err) {
     console.error(err);
 
     res.status(500).json({
-      message: "Error fetching monthly summary",
+      message:
+        "Error fetching monthly summary",
     });
   }
 };
@@ -212,7 +235,11 @@ export const downloadInvoice = async (req, res) => {
       date: {
         $regex: `^${month}`,
       },
-    }).sort({ date: 1 });
+    })
+      .select(
+        "date meal messId",
+      )
+      .sort({ date: 1 });
 
     const rateCache = new Map();
     const dailyRows = [];
@@ -221,7 +248,7 @@ export const downloadInvoice = async (req, res) => {
       let rates = rateCache.get(meal.date);
 
       if (!rates) {
-        rates = await getMealRates(user.messId, meal.date);
+        rates = await getMealRates(meal.messId, meal.date);
 
         if (!rates) continue;
 
@@ -233,6 +260,7 @@ export const downloadInvoice = async (req, res) => {
       if (!row) {
         row = {
           date: meal.date,
+          messId: meal.messId,
           breakfast: "-",
           lunch: "-",
           dinner: "-",
@@ -308,9 +336,10 @@ export const downloadInvoice = async (req, res) => {
     doc.font("Helvetica-Bold");
 
     doc.text("Date", 50, y);
-    doc.text("Breakfast", 170, y);
-    doc.text("Lunch", 290, y);
-    doc.text("Dinner", 410, y);
+    doc.text("Mess", 120, y);
+    doc.text("Breakfast", 250, y);
+    doc.text("Lunch", 350, y);
+    doc.text("Dinner", 450, y);
 
     doc
       .moveTo(50, y + 18)
@@ -341,7 +370,7 @@ export const downloadInvoice = async (req, res) => {
     });
 
     doc.moveDown(2);
-    
+
     doc.y = y + 20;
 
     doc.moveTo(50, doc.y).lineTo(550, doc.y).stroke();

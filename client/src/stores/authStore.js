@@ -46,4 +46,39 @@ export const useAuthStore = create((set) => ({
       admin: null,
     });
   },
+  refreshStudentProfile: async () => {
+    const token = localStorage.getItem("studentToken");
+
+    if (!token) {
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/auth/profile`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      if (!res.ok) {
+        throw new Error("Failed to refresh student profile");
+      }
+
+      const user = await res.json();
+
+      localStorage.setItem("user", JSON.stringify(user));
+
+      set({
+        user,
+      });
+
+      return user;
+    } catch (error) {
+      console.error("Failed to refresh student profile:", error);
+    }
+  },
 }));
